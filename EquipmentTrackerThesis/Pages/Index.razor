@@ -1,4 +1,8 @@
 ﻿@page "/"
+@using EquipmentTrackerThesis.Database;
+@using EquipmentTrackerThesis.Database.Models;
+@inject DatabaseHandler _databaseHandler;
+
 
 <PageTitle>Index</PageTitle>
 
@@ -7,3 +11,23 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+
+@code{
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Employee x = new Employee();
+            x.FirstName = "Gábor";
+            x.SurName = "Kozák";
+            x.Email = "sfsdf@dfsd";
+            x.JobTitle = 2;
+
+            //_databaseHandler.AddNewEmployee(x); 
+            var employees = _databaseHandler.GetAllEmployees();
+
+            //string z = employees[1].FirstName;
+            _databaseHandler.DeleteEmployee(employees[1]);
+        }
+    }
+}
