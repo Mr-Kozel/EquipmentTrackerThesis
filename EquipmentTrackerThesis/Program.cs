@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
+//Database connection string
 builder.Services.AddDbContext<DatabaseContext>(options =>
 {
     options.UseSqlServer("Server=localhost; DataBase=ManagementSystemDB; Trusted_connection=True;");
