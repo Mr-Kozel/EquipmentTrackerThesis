@@ -11,7 +11,7 @@ namespace EquipmentTrackerThesis.Database
             _dbcontext = dbcontext;
         }
 
-        #region ACCESSCARDS
+        #region ACCESSCARDS - tested
 
         /// <summary>
         /// This method lists all accesscards in the table.
@@ -91,7 +91,7 @@ namespace EquipmentTrackerThesis.Database
 
         #endregion
 
-        #region EMPLOYEES
+        #region EMPLOYEES - tested
 
         /// <summary>
         /// This method lists all employees in the table.

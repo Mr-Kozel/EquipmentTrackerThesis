@@ -17,17 +17,32 @@ Welcome to your new app.
     {
         if (firstRender)
         {
-            Employee x = new Employee();
-            x.FirstName = "Gábor";
-            x.SurName = "Kozák";
-            x.Email = "sfsdf@dfsd";
-            x.JobTitle = 2;
+            /*AccessCard x = new AccessCard();
+            x.MainBuilding = true;
+            x.Laboratory = false;
+            x.ProductionSite = true;
+            x.ProductionSite = false;
+            x.HazardWarehouse = true;
+            x.DevelopementCenter = false;
+            x.CountrysideSite = false;
 
-            //_databaseHandler.AddNewEmployee(x); 
-            var employees = _databaseHandler.GetAllEmployees();
+            _databaseHandler.AddNewAccessCard(x); 
+            var accessCards = _databaseHandler.GetAllAccessCards();
 
-            //string z = employees[1].FirstName;
-            _databaseHandler.DeleteEmployee(employees[1]);
+            bool z = accessCards[1].Laboratory;
+            _databaseHandler.DeleteAccessCard(accessCards[7]);*/
+
+            Devices x = new Devices();
+            x.SerialNumber = "51654132516sdf";
+            x.Type = "Tablet";
+            x.PurchaseDate = 2024-02-28;
+
+
+            _databaseHandler.AddNewAccessCard(x);
+            var accessCards = _databaseHandler.GetAllAccessCards();
+
+            bool z = accessCards[1].Laboratory;
+            _databaseHandler.DeleteAccessCard(accessCards[7]);
         }
     }
 }

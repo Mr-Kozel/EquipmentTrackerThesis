@@ -4,6 +4,8 @@
     {
         public int Id { get; set; }
         public string Password { get; set; }
-        //TODO: utolsó belépés ideje is kellene
+
+        public DateTimeOffset LastLogin { get; set; }
+        //TODO: adatbázisba konvertálást megoldani
     }
 }

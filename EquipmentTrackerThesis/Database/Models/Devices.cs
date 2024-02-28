@@ -9,10 +9,10 @@ namespace EquipmentTrackerThesis.Database.Models
         public string SerialNumber { get; set; }
         public string Name { get; set; }
         public string Type  { get; set; }
-        public DateOnly PurchaseDate { get; set; }
+        public DateTime PurchaseDate { get; set; }
         public int Owner { get; set; }
-        public DateOnly ReceptionDate { get; set; }
-        public DateOnly ReturnDate { get; set; }
+        public DateTime ReceptionDate { get; set; }
+        public DateTime ReturnDate { get; set; }
 
     }
 }
