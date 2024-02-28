@@ -11,8 +11,8 @@ namespace EquipmentTrackerThesis.Database
             _dbcontext = dbcontext;
         }
 
-        //ACCESSCARDS
-        
+        #region ACCESSCARDS
+
         /// <summary>
         /// This method lists all accesscards in the table.
         /// </summary>
@@ -49,7 +49,9 @@ namespace EquipmentTrackerThesis.Database
             _dbcontext.SaveChanges();
         }
 
-        //DEVICES
+        #endregion
+
+        #region DEVICES
 
         /// <summary>
         /// This method lists all devices in the table.
@@ -81,13 +83,15 @@ namespace EquipmentTrackerThesis.Database
         /// This method updates the selected data(s) of a device.
         /// </summary>
         /// <param name="device">The row of the selected device</param>
-        public void UpdateEmployee(Devices device)
+        public void UpdateDevice(Devices device)
         {
             _dbcontext.Devices.Update(device);
             _dbcontext.SaveChanges();
         }
-        
-        //EMPLOYEES
+
+        #endregion
+
+        #region EMPLOYEES
 
         /// <summary>
         /// This method lists all employees in the table.
@@ -125,7 +129,9 @@ namespace EquipmentTrackerThesis.Database
             _dbcontext.SaveChanges();
         }
 
-        //JOBTITLE
+        #endregion
+
+        #region JOBTITLE
 
         /// <summary>
         /// This method lists all jobtitles in the table.
@@ -148,7 +154,7 @@ namespace EquipmentTrackerThesis.Database
         /// This method removes the selcted row from JobTitle table.
         /// </summary>
         /// <param name="jobTitle">The row of the selected job title.</param>
-        public void DeleteJobTitlee(JobTitle jobTitle)
+        public void DeleteJobTitle(JobTitle jobTitle)
         {
             _dbcontext.JobTitle.Remove(jobTitle);
             _dbcontext.SaveChanges();
@@ -163,7 +169,9 @@ namespace EquipmentTrackerThesis.Database
             _dbcontext.SaveChanges();
         }
 
-        //LOGIN
+        #endregion
+
+        #region LOGIN
 
         /// <summary>
         /// This method lists all logins in the table.
@@ -201,5 +209,6 @@ namespace EquipmentTrackerThesis.Database
             _dbcontext.SaveChanges();
         }
 
+        #endregion
     }
 }
