@@ -51,7 +51,7 @@ namespace EquipmentTrackerThesis.Database
 
         #endregion
 
-        #region DEVICES
+        #region DEVICES - tested
 
         /// <summary>
         /// This method lists all devices in the table.
@@ -131,7 +131,7 @@ namespace EquipmentTrackerThesis.Database
 
         #endregion
 
-        #region JOBTITLE
+        #region JOBTITLE  tested
 
         /// <summary>
         /// This method lists all jobtitles in the table.
