@@ -1,0 +1,162 @@
+﻿@page "/accesses"
+@using EquipmentTrackerThesis.Database;
+@using EquipmentTrackerThesis.Database.Models;
+@inject DatabaseHandler _databaseHandler;
+
+<PageTitle>Jogosultságok</PageTitle>
+
+<h1>Belépési jogosultságok</h1>
+<hr />
+<div>
+    <div>
+        <img src="/css/Map.jpg" width="1024px" height="576px" />
+        <!--<canvas id="my-canvas" width="1280px" height="720px" />
+        <img src="/css/SiteMap.JPG" />-->
+    </div>
+    <div class="d-flex flex-row justify-content-around">
+        <div class="d-flex flex-column">
+            <br />
+            <div class="d-inline-block">
+                Fő épület: 
+                <img src=@main width="12px" height="12px" />
+            </div>
+            <div>
+                Labor: 
+                <img src=@lab width="12px" height="12px" />
+            </div>
+            <div>
+                Fejleztőközpont:
+                <img src=@rnd width="12px" height="12px" />
+            </div>
+            <div>
+                Gyártósor:
+                <img src=@prod width="12px" height="12px" />
+            </div>
+            <div>
+                Raktár:
+                <img src=@ware width="12px" height="12px" />
+            </div>
+            <div>
+                Veszélyes áru raktár:
+                <img src=@hware width="12px" height="12px" />
+            </div>
+            <br />
+        </div>
+        <div>
+            Külső telephely
+            <img src=@county width="12px" height="12px" />
+        </div>
+    </div>
+
+
+
+</div>
+<!--<p role="status">Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>-->
+
+<script>
+
+    //const myCanvas = document.getElementById("my-canvas")
+    //const myContext = myCanvas.getContext("2d")
+    //const img = new Image()
+    //img.src = "/css/SiteMap.JPG"
+    //img.onload = () => {
+    //    context.drawImage(img, 0, 0)
+    //}
+</script>
+
+@code {
+    public string main;
+    public string lab;
+    public string county;
+    public string rnd;
+    public string prod;
+    public string ware;
+    public string hware;
+
+    public Accesses() {
+
+        var accessCards = _databaseHandler.GetAllAccessCards();
+
+        bool x = accessCards[1].MainBuilding;
+        if(x == true)
+        {
+            main = "/css/check.png";
+        }
+        else
+        {
+            main = "/css/close.png";
+        }
+
+        bool y = accessCards[1].Laboratory;
+        if (y == true)
+        {
+            lab = "/css/check.png";
+        }
+        else
+        {
+            lab = "/css/close.png";
+        }
+        
+        bool z = accessCards[1].DevelopementCenter;
+        if (z == true)
+        {
+            rnd = "/css/check.png";
+        }
+        else
+        {
+            rnd = "/css/close.png";
+        }
+
+        bool v = accessCards[1].ProductionSite;
+        if (v == true)
+        {
+            prod = "/css/check.png";
+        }
+        else
+        {
+            prod = "/css/close.png";
+        }
+        
+        bool w = accessCards[1].Warehouse;
+        if (w == true)
+        {
+            ware = "/css/check.png";
+        }
+        else
+        {
+            ware = "/css/close.png";
+        }
+
+        bool ww = accessCards[1].HazardWarehouse;
+        if (ww == true)
+        {
+            hware = "/css/check.png";
+        }
+        else
+        {
+            hware = "/css/close.png";
+        }
+        
+        bool zs = accessCards[1].CountrysideSite;
+        if (zs == true)
+        {
+            county = "/css/check.png";
+        }
+        else
+        {
+            county = "/css/close.png";
+        }
+
+
+    }
+    
+
+    //private int currentCount = 0;
+
+    /*private void IncrementCount()
+    {
+        currentCount++;
+    }*/
+}

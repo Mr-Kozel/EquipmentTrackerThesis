@@ -12,7 +12,7 @@
 
     <div class="d-flex flex-culomn">
         <!--Kell majd 1-1 basic kép ide-->
-        <img src="~/css/basicmale" />
+        <img src=@(location) style="width: 120px"/>
         <br />
         Név: @(name)
         <br />
@@ -35,9 +35,10 @@
 
 </div>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<!--<SurveyPrompt Title="How is Blazor working for you?" />-->
 
 @code{
+    string location;
     string firstName;
     string name;
     string position;
@@ -46,7 +47,11 @@
     string boss;
     string description;
 
-
+    public Index()
+    {
+        location = "/css/female.png";
+    }
+        
 
     protected override void OnAfterRender(bool firstRender)
     {
