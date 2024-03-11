@@ -1,0 +1,63 @@
+﻿@page "/devices"
+
+<PageTitle>Céges eszközök</PageTitle>
+
+@using EquipmentTrackerThesis.Data
+@using EquipmentTrackerThesis.Database;
+@using EquipmentTrackerThesis.Database.Models;
+@inject DatabaseHandler _databaseHandler;
+<!--inject WeatherForecastService ForecastService--->
+
+<h1> - eszközei</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+@if (stuff == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Átvétel</th>
+                <th>Gyártási szám</th>
+                <th>Név</th>
+                <th>Típus</th>
+                <th>Vásárlás dátuma</th>
+                <th>Tulajdonos</th>
+                <th>Átvétel dátuma</th>
+                <th>Leadás dátuma</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var dev in stuff)
+            {
+                <tr>
+                    <td>@dev.Assignment</td>
+                    <td>@dev.SerialNumber</td>
+                    <td>@dev.Name</td>
+                    <td>@dev.Type</td>
+                    <td>@dev.PurchaseDate</td>
+                    <td>@dev.Owner</td>
+                    <td>@dev.ReceptionDate</td>
+                    <td>@dev.ReturnDate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<Database.Models.Devices> stuff = new List<Database.Models.Devices>();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        var devices = _databaseHandler.GetAllDevices();
+
+        stuff = devices;
+    }
+}

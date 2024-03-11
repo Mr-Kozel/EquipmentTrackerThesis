@@ -75,12 +75,16 @@
     public string ware;
     public string hware;
 
-    public Accesses() {
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
 
         var accessCards = _databaseHandler.GetAllAccessCards();
 
+
         bool x = accessCards[1].MainBuilding;
-        if(x == true)
+        if (x == true)
         {
             main = "/css/check.png";
         }
@@ -98,7 +102,7 @@
         {
             lab = "/css/close.png";
         }
-        
+
         bool z = accessCards[1].DevelopementCenter;
         if (z == true)
         {
@@ -118,7 +122,7 @@
         {
             prod = "/css/close.png";
         }
-        
+
         bool w = accessCards[1].Warehouse;
         if (w == true)
         {
@@ -138,7 +142,7 @@
         {
             hware = "/css/close.png";
         }
-        
+
         bool zs = accessCards[1].CountrysideSite;
         if (zs == true)
         {
@@ -148,15 +152,13 @@
         {
             county = "/css/close.png";
         }
-
-
     }
-    
+
 
     //private int currentCount = 0;
 
     /*private void IncrementCount()
-    {
-        currentCount++;
+        {
+    currentCount++;
     }*/
 }

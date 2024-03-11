@@ -1,4 +1,5 @@
 ﻿
+using EquipmentTrackerThesis.Data;
 using EquipmentTrackerThesis.Database.Models;
 
 namespace EquipmentTrackerThesis.Database
@@ -210,5 +211,6 @@ namespace EquipmentTrackerThesis.Database
         }
 
         #endregion
+
     }
 }
