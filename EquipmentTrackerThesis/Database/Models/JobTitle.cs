@@ -9,5 +9,7 @@ namespace EquipmentTrackerThesis.Database.Models
         public int JobTitleId { get; set; }
         public string Description { get; set; }
         public int AccessCardType { get; set; }
+
+        public string Responsibilities { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿@page "/" 
 @using EquipmentTrackerThesis.Database;
 @using EquipmentTrackerThesis.Database.Models;
+@using EquipmentTrackerThesis.Pages.Components;
 @inject DatabaseHandler _databaseHandler;
 
 
@@ -34,23 +35,69 @@
     </div>
 
 </div>
+<div>
+    <button class="btn btn-primary" style="white-space:nowrap" @onclick="@(()=>Modify())">Szerkesztés</button>
+</div>
 
-<!--<SurveyPrompt Title="How is Blazor working for you?" />-->
+
 
 @code{
     string location, firstName, name, position, email, phone, boss, description;
+    bool gender;
 
 
-    public Index()
+
+    protected override void OnInitialized()
     {
-        location = "/css/female.png";
-    }
-        
+        base.OnInitialized();
 
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
+        var employee = _databaseHandler.GetAllEmployees();
+        var jobTitle = _databaseHandler.GetAllJobTitles();
+        var x = employee[0];
+
+        if (x.Gender)
         {
+            location = "/css/male.png";
+        }
+        else
+        {
+            location = "/css/female.png";
+        }
+
+        name = x.SurName + " " + x.FirstName;
+        position = jobTitle[x.JobTitle - 5001].Description;
+        email = x.Email;
+        phone = "+36 " + x.Phone;
+        boss = employee[x.Supervisor - 1].SurName + " " + employee[x.Supervisor - 1].FirstName;
+        description = jobTitle[x.JobTitle - 5001].Responsibilities;
+        firstName = x.FirstName;
+        if (boss == name)
+        {
+            boss = " - ";
+        }
+    }
+
+    private ModalDialogWindow modalDialogWindow { get; set; }
+
+        private void Modify()
+        {
+            /*if (availableNames.Contains(newNameToAdd))
+            {
+                modalMessageWindow.Title = $"Add new name";
+                modalMessageWindow.Body = "This name is already exist in the list";
+                modalMessageWindow.Type = ModalWindowType.Error;
+                modalMessageWindow.Open();
+            }
+            else
+            {
+                modalMessageWindow.Title = $"Add new name";
+                modalMessageWindow.Body = "The name was added successfully";
+                modalMessageWindow.Type = ModalWindowType.Success;
+                modalMessageWindow.Open();
+                availableNames.Add(newNameToAdd);
+            }*/
+        }
+
         //TODO: hibára áll ki, ha bármelyik sorban NULL érték van, kezelni kell!
         //TODO: kezeni az idegen kulcsok mitti törlés tiltását hozzá tartozó hibaüzenettel
 
@@ -99,6 +146,6 @@
             string z = jobTitle[1].Description;
             _databaseHandler.DeleteJobTitle(jobTitle[3]);*/
 
-        }
+        
     }
 }

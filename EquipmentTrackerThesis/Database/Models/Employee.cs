@@ -10,8 +10,9 @@ namespace EquipmentTrackerThesis.Database.Models
         public string FirstName { get; set; }
         public string Email { get; set; }
         public int JobTitle { get; set; }
-        public int Phone { get; set; }
+        public string Phone { get; set; }
         public int Supervisor { get; set; }
+        public bool Gender { get; set; }
 
     }
 }

@@ -1,0 +1,97 @@
+﻿@using EquipmentTrackerThesis.Data;
+
+<div class="modal @(ModalClass)" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="d-flex justify-content-center align-items-center @(ModalTypeToClass())">
+                <span class="oi oi-@(IconFromModalType())" style="margin-right:5px" aria-hidden="true"></span>
+                <h6 class="modal-title">@Title</h6>
+            </div> 
+            <div class="modal-body">
+                <p>@Body</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn spa-btn-secondary" data-dismiss="modal" @onclick="() => Close()">Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+    [Parameter]
+    public string Body { get; set; }
+    private ModalWindowType _type;
+    [Parameter]
+    public ModalWindowType Type
+    {
+        get
+        {
+            return _type;
+        }
+        set
+        {
+            _type = value;
+        }
+    }
+
+    public Guid Guid = Guid.NewGuid();
+    public string ModalDisplay = "none;";
+    public string ModalClass = "";
+    public bool ShowBackdrop = false;
+
+    public void Open()
+    {
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        ModalDisplay = "none";
+        ModalClass = "";
+        ShowBackdrop = false;
+        StateHasChanged();
+    }
+
+    private string ModalTypeToClass()
+    {
+        //I added these classes to the CSS file, you can modify it further
+        switch (Type)
+        {
+            case ModalWindowType.Success:
+                return "msg-success";
+            case ModalWindowType.Warning:
+                return "msg-warning";
+            case ModalWindowType.Error:
+                return "msg-error";
+            default:
+                return "msg-info";
+        }
+    }
+
+    private string IconFromModalType()
+    {
+        //These icons come from Open Iconic, which is part of bootstrap framework which is added automatically with Blazor
+        //You can find possibilites here: https://icon-sets.iconify.design/oi/
+        switch (Type)
+        {
+            case ModalWindowType.Success:
+                return "circle-check";
+            case ModalWindowType.Warning:
+                return "warning";
+            case ModalWindowType.Error:
+                return "circle-x";
+            default:
+                return "info";
+        }
+    }
+}
