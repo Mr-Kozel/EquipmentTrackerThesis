@@ -6,12 +6,33 @@
             <div class="d-flex justify-content-center align-items-center @(ModalTypeToClass())">
                 <span class="oi oi-@(IconFromModalType())" style="margin-right:5px" aria-hidden="true"></span>
                 <h6 class="modal-title">@Title</h6>
-            </div> 
-            <div class="modal-body">
-                <p>@Body</p>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn spa-btn-secondary" data-dismiss="modal" @onclick="() => Close()">Ok</button>
+            <div class="modal-body">
+                <label for="fname">Vezetéknév:</label>
+                <input type="text" align="right" id="fname" name="fname" value="@FirstName"><br><br>
+                <label for="sname">Keresztnév:</label>
+                <input type="text" align="right" id="sname" name="sname" value="@SurName"><br><br>
+                <label for="email">E-mail:</label>
+                <input type="email" align="right" id="email" name="emil" value="@Email"><br><br>
+                <label for="jtitle">Beosztás:</label>
+                <input type="text" align="right" id="jtitle" name="jtitle" value="@JobTitle"><br><br>
+                <label for="phone">Mobil:</label>
+                <input type="tel" align="right" id="phone" name="phone" value="@Phone"><br><br>
+                <label for="supervisor">Felettes:</label>
+                <input type="text" align="right" id="supervisor" name="supervisor" value="@Supervisor"><br><br>
+                <label for="gender">Nem:</label>
+                <div class ="d-flex d-inline">
+                    <label for="male">Férfi</label>
+                    <input type="radio" id="male" name="gender" value="@Gender"><br><br>
+                </div>
+                <div class="d-flex d-inline-flex">
+                    <label for="female">Nő</label>
+                    <input type="radio" id="female" name="gender" value="@Gender"><br><br>
+                </div>
+            </div>
+            <div class="modal-footer d-inline-block">
+                <button type="button" class="btn spa-btn-secondary" data-dismiss="modal" @onclick="() => Update()">Módosítás</button>
+                <button type="button" class="btn spa-btn-secondary" data-dismiss="modal" @onclick="() => Close()">Mégse</button>
             </div>
         </div>
     </div>
@@ -27,6 +48,20 @@
     public string Title { get; set; }
     [Parameter]
     public string Body { get; set; }
+    [Parameter]
+    public string SurName { get; set; }
+    [Parameter]
+    public string FirstName { get; set; }
+    [Parameter]
+    public string Email { get; set; }
+    [Parameter]
+    public string JobTitle { get; set; }
+    [Parameter]
+    public string Phone { get; set; }
+    [Parameter]
+    public string Supervisor { get; set; }
+    [Parameter]
+    public bool Gender { get; set; }
     private ModalWindowType _type;
     [Parameter]
     public ModalWindowType Type
@@ -36,6 +71,7 @@
             return _type;
         }
         set
+
         {
             _type = value;
         }
@@ -61,14 +97,18 @@
         ShowBackdrop = false;
         StateHasChanged();
     }
+    public void Update()
+    {
+        
+    }
 
     private string ModalTypeToClass()
     {
         //I added these classes to the CSS file, you can modify it further
         switch (Type)
         {
-            case ModalWindowType.Success:
-                return "msg-success";
+            case ModalWindowType.Modify:
+                return "msg-loop-circular";
             case ModalWindowType.Warning:
                 return "msg-warning";
             case ModalWindowType.Error:
@@ -84,8 +124,8 @@
         //You can find possibilites here: https://icon-sets.iconify.design/oi/
         switch (Type)
         {
-            case ModalWindowType.Success:
-                return "circle-check";
+            case ModalWindowType.Modify:
+                return "loop-circular";
             case ModalWindowType.Warning:
                 return "warning";
             case ModalWindowType.Error:

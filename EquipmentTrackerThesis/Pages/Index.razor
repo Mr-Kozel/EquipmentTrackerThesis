@@ -1,4 +1,5 @@
 ﻿@page "/" 
+@using EquipmentTrackerThesis.Data;
 @using EquipmentTrackerThesis.Database;
 @using EquipmentTrackerThesis.Database.Models;
 @using EquipmentTrackerThesis.Pages.Components;
@@ -39,21 +40,24 @@
     <button class="btn btn-primary" style="white-space:nowrap" @onclick="@(()=>Modify())">Szerkesztés</button>
 </div>
 
-
+<ModalDialogWindow @ref="modalDialogWindow"></ModalDialogWindow>
 
 @code{
-    string location, firstName, name, position, email, phone, boss, description;
+    string location, firstName, surName, name, position, email, phone, boss, description;
     bool gender;
+    int z = 0; // az adott felhasználó száma
 
-
+    List<Employee> employee = new List<Employee>();
+    List<JobTitle> jobTitle = new List<JobTitle>();
+    Employee modifyPerson = new Employee();
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
 
-        var employee = _databaseHandler.GetAllEmployees();
-        var jobTitle = _databaseHandler.GetAllJobTitles();
-        var x = employee[0];
+        employee = _databaseHandler.GetAllEmployees();
+        jobTitle = _databaseHandler.GetAllJobTitles();
+        var x = employee[z];
 
         if (x.Gender)
         {
@@ -67,10 +71,11 @@
         name = x.SurName + " " + x.FirstName;
         position = jobTitle[x.JobTitle - 5001].Description;
         email = x.Email;
-        phone = "+36 " + x.Phone;
+        phone = x.Phone;
         boss = employee[x.Supervisor - 1].SurName + " " + employee[x.Supervisor - 1].FirstName;
         description = jobTitle[x.JobTitle - 5001].Responsibilities;
         firstName = x.FirstName;
+        surName = x.SurName;
         if (boss == name)
         {
             boss = " - ";
@@ -79,24 +84,53 @@
 
     private ModalDialogWindow modalDialogWindow { get; set; }
 
-        private void Modify()
+    private void Modify()
+    {
+        modalDialogWindow.Title = $"Szerkesztés";
+        //modalDialogWindow.Body = "This name is already exist in the list";
+        modalDialogWindow.FirstName = firstName;
+        modalDialogWindow.SurName = surName;
+        modalDialogWindow.Email = email;
+        modalDialogWindow.JobTitle = position;
+        modalDialogWindow.Phone = phone;
+        modalDialogWindow.Supervisor = boss;
+        modalDialogWindow.Gender = gender;
+        modalDialogWindow.Type = ModalWindowType.Modify;
+        modalDialogWindow.Open();
+
+        modifyPerson.SurName = surName;
+        modifyPerson.FirstName = firstName;
+        modifyPerson.Email = email;
+
+        modifyPerson.JobTitle = jobTitle.IndexOf(position);
+        modifyPerson.Phone = phone;
+
+        modifyPerson.Supervisor = boss;
+        modifyPerson.Gender = gender;
+
+        if (firstName != employee[z].FirstName)
         {
-            /*if (availableNames.Contains(newNameToAdd))
-            {
-                modalMessageWindow.Title = $"Add new name";
-                modalMessageWindow.Body = "This name is already exist in the list";
-                modalMessageWindow.Type = ModalWindowType.Error;
-                modalMessageWindow.Open();
-            }
-            else
-            {
-                modalMessageWindow.Title = $"Add new name";
-                modalMessageWindow.Body = "The name was added successfully";
-                modalMessageWindow.Type = ModalWindowType.Success;
-                modalMessageWindow.Open();
-                availableNames.Add(newNameToAdd);
-            }*/
+
         }
+
+        /*if (availableNames.Contains(newNameToAdd))
+        {
+            modalMessageWindow.Title = $"Add new name";
+            modalMessageWindow.Body = "This name is already exist in the list";
+            modalMessageWindow.Type = ModalWindowType.Error;
+            modalMessageWindow.Open();
+        }
+        else
+        {
+            modalMessageWindow.Title = $"Add new name";
+            modalMessageWindow.Body = "The name was added successfully";
+            modalMessageWindow.Type = ModalWindowType.Success;
+            modalMessageWindow.Open();
+            availableNames.Add(newNameToAdd);
+        }*/
+    }
+
+
 
         //TODO: hibára áll ki, ha bármelyik sorban NULL érték van, kezelni kell!
         //TODO: kezeni az idegen kulcsok mitti törlés tiltását hozzá tartozó hibaüzenettel
@@ -147,5 +181,5 @@
             _databaseHandler.DeleteJobTitle(jobTitle[3]);*/
 
         
-    }
+    
 }
