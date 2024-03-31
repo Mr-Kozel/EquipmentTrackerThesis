@@ -37,27 +37,29 @@
 
 </div>
 <div>
-    <button class="btn btn-primary" style="white-space:nowrap" @onclick="@(()=>Modify())">Szerkesztés</button>
+    <button class="btn btn-primary" style="white-space:nowrap" @onclick="@(()=>Modify(employee))">Szerkesztés</button>
 </div>
 
 <ModalDialogWindow @ref="modalDialogWindow"></ModalDialogWindow>
 
 @code{
-    string location, firstName, surName, name, position, email, phone, boss, description;
+    string location, firstName, surName, name, position, email, phone, boss, boss1, boss2, description;
     bool gender;
     int z = 0; // az adott felhasználó száma
+    int supervisor, pos;
 
-    List<Employee> employee = new List<Employee>();
+    List<Employee> employees = new List<Employee>();
     List<JobTitle> jobTitle = new List<JobTitle>();
-    Employee modifyPerson = new Employee();
+    Employee employee = new Employee();
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
 
-        employee = _databaseHandler.GetAllEmployees();
+        employees = _databaseHandler.GetAllEmployees();
         jobTitle = _databaseHandler.GetAllJobTitles();
-        var x = employee[z];
+        var x = employees[z];
+        employee = x;
 
         if (x.Gender)
         {
@@ -70,64 +72,41 @@
 
         name = x.SurName + " " + x.FirstName;
         position = jobTitle[x.JobTitle - 5001].Description;
+        pos = x.JobTitle - 5001;
         email = x.Email;
         phone = x.Phone;
-        boss = employee[x.Supervisor - 1].SurName + " " + employee[x.Supervisor - 1].FirstName;
+        boss1 = employees[x.Supervisor - 1].SurName;
+        boss2 = employees[x.Supervisor - 1].FirstName;
         description = jobTitle[x.JobTitle - 5001].Responsibilities;
         firstName = x.FirstName;
         surName = x.SurName;
+        gender = x.Gender;
+        boss = boss1 + " " + boss2; 
         if (boss == name)
         {
             boss = " - ";
         }
+        supervisor = x.Supervisor;
     }
 
     private ModalDialogWindow modalDialogWindow { get; set; }
 
-    private void Modify()
+    private void Modify(Employee employee)
     {
         modalDialogWindow.Title = $"Szerkesztés";
-        //modalDialogWindow.Body = "This name is already exist in the list";
         modalDialogWindow.FirstName = firstName;
         modalDialogWindow.SurName = surName;
         modalDialogWindow.Email = email;
-        modalDialogWindow.JobTitle = position;
+        modalDialogWindow.JobTitle = pos;
         modalDialogWindow.Phone = phone;
-        modalDialogWindow.Supervisor = boss;
+        modalDialogWindow.Supervisor = supervisor;
         modalDialogWindow.Gender = gender;
         modalDialogWindow.Type = ModalWindowType.Modify;
-        modalDialogWindow.Open();
+        modalDialogWindow.EmployeeId = z;
+        modalDialogWindow.Open(employee);
 
-        modifyPerson.SurName = surName;
-        modifyPerson.FirstName = firstName;
-        modifyPerson.Email = email;
 
-        modifyPerson.JobTitle = jobTitle.IndexOf(position);
-        modifyPerson.Phone = phone;
 
-        modifyPerson.Supervisor = boss;
-        modifyPerson.Gender = gender;
-
-        if (firstName != employee[z].FirstName)
-        {
-
-        }
-
-        /*if (availableNames.Contains(newNameToAdd))
-        {
-            modalMessageWindow.Title = $"Add new name";
-            modalMessageWindow.Body = "This name is already exist in the list";
-            modalMessageWindow.Type = ModalWindowType.Error;
-            modalMessageWindow.Open();
-        }
-        else
-        {
-            modalMessageWindow.Title = $"Add new name";
-            modalMessageWindow.Body = "The name was added successfully";
-            modalMessageWindow.Type = ModalWindowType.Success;
-            modalMessageWindow.Open();
-            availableNames.Add(newNameToAdd);
-        }*/
     }
 
 

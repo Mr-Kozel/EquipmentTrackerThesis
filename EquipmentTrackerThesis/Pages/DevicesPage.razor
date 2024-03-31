@@ -1,0 +1,89 @@
+﻿@page "/devices"
+
+<PageTitle>Céges eszközök</PageTitle>
+
+@using EquipmentTrackerThesis.Data
+@using EquipmentTrackerThesis.Database;
+@using EquipmentTrackerThesis.Database.Models;
+@inject DatabaseHandler _databaseHandler;
+<!--inject WeatherForecastService ForecastService--->
+
+<h1> @employee[x].SurName @employee[x].FirstName eszközei</h1>
+
+<div class="search-container">
+    <input type="text" value="@searchTerm" @oninput="HandleInput" placeholder="Keresés...">
+    <button class="btn btn-primary" @onclick="FilterDevices">Keresés</button>
+</div>
+
+@if (stuff == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Név</th>
+                <th>Gyártási szám</th>
+                <th>Típus</th>
+                <th>Vásárlás dátuma</th>
+                <th>Tulajdonos</th>
+                <th>Átvétel dátuma</th>
+                <th>Leadás dátuma</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var dev in filteredDevices)
+            {
+                <tr>
+                    <td>@dev.Name</td>
+                    <td>@dev.SerialNumber</td>
+                    <td>@dev.Type</td>
+                    <td>@dev.PurchaseDate.Date.ToString("yyyy.MM.dd.")</td>
+                    <td>@employee[dev.Owner-1].SurName @employee[dev.Owner-1].FirstName</td>
+                    <td>@dev.ReceptionDate.Date.ToString("yyyy.MM.dd.")</td>
+                    <td>@dev.ReturnDate.Date.ToString("yyyy.MM.dd.")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<Devices> stuff = new List<Devices>();
+    List<Employee> employee = new List<Employee>();
+    int x = 0;
+    string searchTerm = "";
+    List<Devices> filteredDevices = new List<Devices>();
+
+    protected override void OnInitialized()
+    {
+        stuff = _databaseHandler.GetAllDevices();
+        employee = _databaseHandler.GetAllEmployees();
+        filteredDevices = stuff;
+    }
+
+    protected void HandleInput(ChangeEventArgs e)
+    {
+        searchTerm = e.Value.ToString();
+    }
+
+    void FilterDevices()
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            filteredDevices = stuff;
+        }
+        else
+        {
+            filteredDevices = stuff.Where(dev =>
+                dev.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                dev.SerialNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                dev.Type.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                employee[dev.Owner-1].SurName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                employee[dev.Owner-1].FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+            ).ToList();
+        }
+    }
+}

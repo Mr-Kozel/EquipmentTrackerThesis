@@ -5,7 +5,9 @@
 
 <PageTitle>Jogosultságok</PageTitle>
 
-<h1>Belépési jogosultságok</h1>
+<h1>Belépési jogosultságok </h1>
+<h2>@surName @firstName</h2>
+
 <hr />
 <div>
     <div>
@@ -51,20 +53,7 @@
 
 
 </div>
-<!--<p role="status">Current count: @currentCount</p>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>-->
-
-<script>
-
-    //const myCanvas = document.getElementById("my-canvas")
-    //const myContext = myCanvas.getContext("2d")
-    //const img = new Image()
-    //img.src = "/css/SiteMap.JPG"
-    //img.onload = () => {
-    //    context.drawImage(img, 0, 0)
-    //}
-</script>
 
 @code {
     public string main;
@@ -74,6 +63,10 @@
     public string prod;
     public string ware;
     public string hware;
+    public int accessCardId;
+    public string firstName;
+    public string surName;
+    public int employee;
 
 
     protected override void OnInitialized()
@@ -81,9 +74,16 @@
         base.OnInitialized();
 
         var accessCards = _databaseHandler.GetAllAccessCards();
+        var employees = _databaseHandler.GetAllEmployees();
+        var jobTitles = _databaseHandler.GetAllJobTitles();
 
+        employee = 0;
+        accessCardId = jobTitles[employees[employee].JobTitle-5000].AccessCardType-1000;
+        
+        surName = employees[employee].SurName;
+        firstName = employees[employee].FirstName;
 
-        bool x = accessCards[1].MainBuilding;
+        bool x = accessCards[accessCardId].MainBuilding;
         if (x == true)
         {
             main = "/css/check.png";
@@ -93,7 +93,7 @@
             main = "/css/close.png";
         }
 
-        bool y = accessCards[1].Laboratory;
+        bool y = accessCards[accessCardId].Laboratory;
         if (y == true)
         {
             lab = "/css/check.png";
@@ -103,7 +103,7 @@
             lab = "/css/close.png";
         }
 
-        bool z = accessCards[1].DevelopementCenter;
+        bool z = accessCards[accessCardId].DevelopementCenter;
         if (z == true)
         {
             rnd = "/css/check.png";
@@ -113,7 +113,7 @@
             rnd = "/css/close.png";
         }
 
-        bool v = accessCards[1].ProductionSite;
+        bool v = accessCards[accessCardId].ProductionSite;
         if (v == true)
         {
             prod = "/css/check.png";
@@ -123,7 +123,7 @@
             prod = "/css/close.png";
         }
 
-        bool w = accessCards[1].Warehouse;
+        bool w = accessCards[accessCardId].Warehouse;
         if (w == true)
         {
             ware = "/css/check.png";
@@ -133,7 +133,7 @@
             ware = "/css/close.png";
         }
 
-        bool ww = accessCards[1].HazardWarehouse;
+        bool ww = accessCards[accessCardId].HazardWarehouse;
         if (ww == true)
         {
             hware = "/css/check.png";
@@ -143,7 +143,7 @@
             hware = "/css/close.png";
         }
 
-        bool zs = accessCards[1].CountrysideSite;
+        bool zs = accessCards[accessCardId].CountrysideSite;
         if (zs == true)
         {
             county = "/css/check.png";
@@ -154,11 +154,4 @@
         }
     }
 
-
-    //private int currentCount = 0;
-
-    /*private void IncrementCount()
-        {
-    currentCount++;
-    }*/
 }

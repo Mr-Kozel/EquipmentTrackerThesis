@@ -1,42 +1,73 @@
 ﻿@using EquipmentTrackerThesis.Data;
+@using EquipmentTrackerThesis.Database;
+@using EquipmentTrackerThesis.Database.Models;
+@inject DatabaseHandler _databaseHandler;
 
 <div class="modal @(ModalClass)" tabindex="-1" role="dialog" style="display:@ModalDisplay">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="d-flex justify-content-center align-items-center @(ModalTypeToClass())">
+        <div class="modal-content" style="background-color: #9effa9;">
+            <div class="d-flex @(ModalTypeToClass())">
                 <span class="oi oi-@(IconFromModalType())" style="margin-right:5px" aria-hidden="true"></span>
                 <h6 class="modal-title">@Title</h6>
             </div>
             <div class="modal-body">
-                <label for="fname">Vezetéknév:</label>
-                <input type="text" align="right" id="fname" name="fname" value="@FirstName"><br><br>
-                <label for="sname">Keresztnév:</label>
-                <input type="text" align="right" id="sname" name="sname" value="@SurName"><br><br>
-                <label for="email">E-mail:</label>
-                <input type="email" align="right" id="email" name="emil" value="@Email"><br><br>
-                <label for="jtitle">Beosztás:</label>
-                <input type="text" align="right" id="jtitle" name="jtitle" value="@JobTitle"><br><br>
-                <label for="phone">Mobil:</label>
-                <input type="tel" align="right" id="phone" name="phone" value="@Phone"><br><br>
-                <label for="supervisor">Felettes:</label>
-                <input type="text" align="right" id="supervisor" name="supervisor" value="@Supervisor"><br><br>
-                <label for="gender">Nem:</label>
-                <div class ="d-flex d-inline">
-                    <label for="male">Férfi</label>
-                    <input type="radio" id="male" name="gender" value="@Gender"><br><br>
-                </div>
-                <div class="d-flex d-inline-flex">
-                    <label for="female">Nő</label>
-                    <input type="radio" id="female" name="gender" value="@Gender"><br><br>
+                <div class="d-flex flex-column">
+                    <div class="form-group">
+                        <label for="fname">Vezetéknév:</label>
+                        <input type="text" class="form-control" id="fname" name="fname" value="@FirstName">
+                    </div>
+                    <div class="form-group">
+                        <label for="sname">Keresztnév:</label>
+                        <input type="text" class="form-control" id="sname" name="sname" value="@SurName">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail:</label>
+                        <input type="email" class="form-control" id="email" name="emil" value="@Email">
+                    </div>
+                    <div class="form-group">
+                        <label for="jtitle">Beosztás:</label>
+                        <select class="form-control" id="jtitle" name="jtitle" @bind="@SelectedJobTitleId">
+                            @foreach (var title in jobTitle)
+                            {
+                                <option value="@title.JobTitleId">@title.Description</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Mobil:</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" value="@Phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="supervisor">Felettes:</label>
+                        <select class="form-control" id="supervisor" name="supervisor" @bind="@SelectedSupervisorId">
+                            @foreach (var emp in employees)
+                            {
+                                <option value="@emp.Id">@emp.SurName @emp.FirstName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nem:</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" id="male" name="gender" value="true" checked="@Gender">
+                            <label class="form-check-label" for="male">Férfi</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" id="female" name="gender" value="false" checked="@(Gender ? null : "checked")">
+                            <label class="form-check-label" for="female">Nő</label>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer d-inline-block">
                 <button type="button" class="btn spa-btn-secondary" data-dismiss="modal" @onclick="() => Update()">Módosítás</button>
+                <!--@onclick="@(() => AddNewNameToTheList(nameToAdd))"-->
                 <button type="button" class="btn spa-btn-secondary" data-dismiss="modal" @onclick="() => Close()">Mégse</button>
             </div>
         </div>
     </div>
 </div>
+
 
 @if (ShowBackdrop)
 {
@@ -55,13 +86,15 @@
     [Parameter]
     public string Email { get; set; }
     [Parameter]
-    public string JobTitle { get; set; }
+    public int JobTitle { get; set; }
     [Parameter]
     public string Phone { get; set; }
     [Parameter]
-    public string Supervisor { get; set; }
+    public int Supervisor { get; set; }
     [Parameter]
     public bool Gender { get; set; }
+    [Parameter]
+    public Employee Employee { get; set; }
     private ModalWindowType _type;
     [Parameter]
     public ModalWindowType Type
@@ -77,17 +110,39 @@
         }
     }
 
+    List<Employee> employees = new List<Employee>();
+    List<JobTitle> jobTitle = new List<JobTitle>();
+
     public Guid Guid = Guid.NewGuid();
     public string ModalDisplay = "none;";
     public string ModalClass = "";
     public bool ShowBackdrop = false;
+    private string originalSurName;
+    private string originalFirstName;
+    private string originalEmail;
+    private string originalPhone;
+    private bool originalGender;
+    private int SelectedSupervisorId;
+    public int SelectedJobTitleId;
 
-    public void Open()
+
+    public void Open(Employee employee)
     {
         ModalDisplay = "block;";
         ModalClass = "Show";
         ShowBackdrop = true;
         StateHasChanged();
+        employees = _databaseHandler.GetAllEmployees();
+        jobTitle = _databaseHandler.GetAllJobTitles();
+
+        originalSurName = SurName;
+        originalFirstName = FirstName;
+        originalEmail = Email;
+        originalPhone = Phone;
+        originalGender = Gender;
+        SelectedSupervisorId = Supervisor;
+        SelectedJobTitleId = JobTitle;
+        Employee = employee;
     }
 
     public void Close()
@@ -99,7 +154,28 @@
     }
     public void Update()
     {
-        
+        bool isModified = SurName != originalSurName ||
+                         FirstName != originalFirstName ||
+                         Email != originalEmail ||
+                         SelectedJobTitleId != JobTitle ||
+                         Phone != originalPhone ||
+                         SelectedSupervisorId != Supervisor ||
+                         Gender != originalGender;
+
+        if (isModified)
+        {
+            Employee.SurName = SurName;
+            Employee.FirstName = FirstName;
+            Employee.Email = Email;
+            Employee.Phone = Phone;
+            Employee.Gender = Gender;
+            Employee.Supervisor = SelectedSupervisorId;
+            Employee.JobTitle = SelectedJobTitleId + 5001;
+
+            _databaseHandler.UpdateEmployee(Employee);
+
+        }
+
     }
 
     private string ModalTypeToClass()

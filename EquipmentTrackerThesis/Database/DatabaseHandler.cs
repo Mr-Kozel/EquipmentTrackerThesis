@@ -62,6 +62,7 @@ namespace EquipmentTrackerThesis.Database
         {
             return _dbcontext.Devices.ToList();
         }
+
         /// <summary>
         /// This method adds a row to Devices table.
         /// </summary>
