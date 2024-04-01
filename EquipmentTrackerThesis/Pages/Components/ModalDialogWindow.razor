@@ -49,11 +49,11 @@
                     <div class="form-group">
                         <label>Nem:</label>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" id="male" name="gender" value="true" checked="@Gender">
+                            <input class="form-check-input" type="radio" id="male" name="gender" value="true" checked="@Gender" @onchange="e => Gender = true">
                             <label class="form-check-label" for="male">Férfi</label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" id="female" name="gender" value="false" checked="@(Gender ? null : "checked")">
+                            <input class="form-check-input" type="radio" id="female" name="gender" value="false" checked="@(!Gender)" @onchange="e => Gender = false">
                             <label class="form-check-label" for="female">Nő</label>
                         </div>
                     </div>
@@ -132,6 +132,7 @@
         ModalClass = "Show";
         ShowBackdrop = true;
         StateHasChanged();
+
         employees = _databaseHandler.GetAllEmployees();
         jobTitle = _databaseHandler.GetAllJobTitles();
 
@@ -141,7 +142,8 @@
         originalPhone = Phone;
         originalGender = Gender;
         SelectedSupervisorId = Supervisor;
-        SelectedJobTitleId = JobTitle;
+        SelectedJobTitleId = employee.JobTitle;
+
         Employee = employee;
     }
 
@@ -170,12 +172,20 @@
             Employee.Phone = Phone;
             Employee.Gender = Gender;
             Employee.Supervisor = SelectedSupervisorId;
-            Employee.JobTitle = SelectedJobTitleId + 5001;
+            Employee.JobTitle = SelectedJobTitleId;
 
             _databaseHandler.UpdateEmployee(Employee);
-
+            Close();
         }
 
+    }
+
+    public void HandleJobTitleChange(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value.ToString(), out int selectedJobTitleId))
+        {
+            SelectedJobTitleId = selectedJobTitleId;
+        }
     }
 
     private string ModalTypeToClass()
