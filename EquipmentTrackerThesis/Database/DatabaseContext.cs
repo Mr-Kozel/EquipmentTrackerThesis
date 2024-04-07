@@ -1,8 +1,15 @@
 ﻿using EquipmentTrackerThesis.Database.Models;
+using EquipmentTrackerThesis.Database;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
+using System.Security.Cryptography;
+using EquipmentTrackerThesis.Data;
+
+
 
 namespace EquipmentTrackerThesis.Database
 {
+    
     public class DatabaseContext : DbContext
     {
         /// <summary>
@@ -46,7 +53,33 @@ namespace EquipmentTrackerThesis.Database
             });
 
         }
-        
+
+        public string HashPassword(string password)
+        {
+            var salt = "997eff51db1544c7a3c2ddeb2053f052";
+            var md5 = new HMACSHA256(Encoding.UTF8.GetBytes(salt + password));
+            byte[] data = md5.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return System.Convert.ToBase64String(data);
+        }
+
+        public EmployeeModel SignedInEmployee(string username, string hashedpass, DatabaseHandler dbHandler)
+        {
+            var currentEmployee = Login.FirstOrDefault(login => login.Username == username && login.Password == hashedpass);
+            if (currentEmployee == null)
+            {
+                return null;
+            }
+            else
+            {
+                var employee = Employee.FirstOrDefault(employee => employee.Id == currentEmployee.Id);
+                var employees = dbHandler.GetAllEmployees();
+                return new EmployeeModel
+                {
+                    Employee = employees[currentEmployee.Id],
+                    Username = username
+                };
+            }
+        }
 
     }
 }

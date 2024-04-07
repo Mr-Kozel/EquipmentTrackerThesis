@@ -1,28 +1,61 @@
 ﻿@page "/account"
+@using EquipmentTrackerThesis.Data;
+@using EquipmentTrackerThesis.Database;
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@inject DatabaseHandler _dbHandler
+@inject SignInCheck signInCheck
+@inject NavigationManager navigationmanager
 
 <PageTitle>Account</PageTitle>
 
-<!--@if (!string.IsNullOrEmpty(mainLayout.GetUserName()))
+<!---@if (!string.IsNullOrEmpty(mainLayout.GetUserName()))
 {
-	<h3 class="my-4">Your Account</h3>
+    <h3 class="my-4">Saját fiók</h3>
 
-	<p>@mainLayout.GetUserName()</p>
+    <p>@mainLayout.GetUserName()</p>
 
-	<button type="button" class="btn btn-danger" @onclick="mainLayout.Logout">Logout</button>
+    <button type="button" class="btn btn-danger" @onclick="mainLayout.Logout">Kilépés</button>
 }
 else
 {
-	<h3 class="my-4">Please Login</h3>
+    <h3 class="my-4">Kérem lépjen be</h3>
 
-	<button type="button" class="btn btn-success" @onclick="mainLayout.OpenLogin">Login</button>
-}--->
+    <button type="button" class="btn btn-success" @onclick="mainLayout.OpenLogin">Belépés</button>
+}-->
+<div class="form">
+    <h3>Login</h3>
+
+    <label for="username">Username</label>
+    <input type="username" id="username" @bind="@(username)" name="username" placeholder="Enter your username" required>
+
+    <label for="password">Password</label>
+    <input type="password" id="password" @bind="@(password)" required>
+    <span>@errorMessage</span>
+
+    <br />
+    <button class="btn btn-primary prl-btn" @onclick="Login">Log in</button>
+</div>
 
 @code {
-	/*[CascadingParameter]
-	public MainLayout mainLayout { get; set; }
+    private string username;
+    private string password;
+    private string errorMessage;
 
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-	}*/
+    [CascadingParameter]
+    public MainLayout mainLayout { get; set; }
+
+    private void Login()
+    {
+        bool isAuthenticated = signInCheck.SignInAttempt(username, password);
+        if (isAuthenticated)
+        {
+            // Redirect to home page on successful login
+            navigationmanager.NavigateTo("/");
+        }
+        else
+        {
+            errorMessage = "The username and/or the password is incorrect!";
+        }
+    }
+    
 }

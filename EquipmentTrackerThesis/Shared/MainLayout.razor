@@ -1,7 +1,9 @@
 ﻿@inherits LayoutComponentBase
 
-<!--inject EquipmentTrackerThesis.ILocalStorage LocalStorage-->
-<!--<CascadingValue Value="this">-->
+@inject EquipmentTrackerThesis.ILocalStorage LocalStorage
+@inject IJSRuntime JSRuntime
+
+<CascadingValue Value="this">
 
 <PageTitle>EquipmentTrackerThesis</PageTitle>
 
@@ -13,7 +15,7 @@
     <main>
         <div class="top-row px-4">
                 <!--<a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>-->
-                <!--<div style="width:70px;text-align:right;">
+                <div style="width:70px;text-align:right;">
                     @if (loggedIn)
                     {
                         <a class="btn btn-sm btn-primary text-white" title="Account" href="account"><span class="oi oi-key"></span></a>
@@ -23,7 +25,7 @@
                     {
                         <button class="btn btn-sm btn-success" title="Login" @onclick="OpenLogin"><span class="oi oi-account-login"></span></button>
                     }
-				</div>-->
+				</div>
         </div>
 
         <article class="content px-4">
@@ -32,9 +34,9 @@
     </main>
 </div>
 
-<!--</CascadingValue>-->
+</CascadingValue>
 
-<!--<div class="modal-backdrop fade @(show ? "show" : "") @(display ? "d-block" : "d-none")"></div>
+<div class="modal-backdrop fade @(show ? "show" : "") @(display ? "d-block" : "d-none")"></div>
 
 <div class="modal fade @(show ? "show" : "")  @(display ? "d-block" : "d-none")" tabindex="-1" role="dialog">
 	<div class="modal-dialog" role="document">
@@ -61,11 +63,11 @@
 			</div>
 		</div>
 	</div>
-</div>-->
+</div>
 
 @code {
 
-	/*private bool show, display, loggedIn;
+	private bool show, display, loggedIn;
 	private string? user;
 
 	public string? GetUserName()
@@ -84,7 +86,7 @@
 	{
 		user = null;
 		loggedIn = false;
-		await LocalStorage.RemoveAsync("user");
+		await LocalStorage.RemoveAsync("user", JSRuntime);
 	}
 
 	private async Task Close()
@@ -100,14 +102,18 @@
 		{
 			await Close();
 			loggedIn = true;
-			await LocalStorage.SaveStringAsync("user", user);
+			await LocalStorage.SaveStringAsync("user", user, JSRuntime);
 		}
 	}
 
-	protected override async Task OnInitializedAsync()
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		await base.OnInitializedAsync();
-		user = await LocalStorage.GetStringAsync("user");
-		loggedIn = !string.IsNullOrEmpty(user);
-	}*/
+		if (firstRender)
+		{
+			// Pass JSRuntime to GetStringAsync method call
+			user = await LocalStorage.GetStringAsync("user", JSRuntime);
+			loggedIn = !string.IsNullOrEmpty(user);
+			StateHasChanged();
+		}
+	}
 }

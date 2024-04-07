@@ -1,0 +1,102 @@
+﻿@page "/removeEmployee"
+
+@using EquipmentTrackerThesis.Data;
+@using EquipmentTrackerThesis.Database;
+@using EquipmentTrackerThesis.Database.Models;
+@using Microsoft.AspNetCore.Components
+@inject DatabaseHandler _databaseHandler;
+
+<h3>Munkavállaló kiléptetése</h3>
+<div class="AddEmployee" role="document">
+    <div class="" style="background-color: #d60909;">
+        <div class="page-body">
+            <div class="d-flex flex-column">
+                <div class="form-group">
+                    <label for="email">E-mail:</label>
+                    <select class="form-control" id="email" name="email" @onchange="UpdateSelectedEmployee">
+                        @foreach (var employee in employees)
+                        {
+                            <option value="@employee.Id">@employee.Email</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        @if (!string.IsNullOrEmpty(Message))
+        {
+            <div class="alert alert-success" role="alert">
+                @Message
+            </div>
+        }
+        @if (SelectedEmployee != null)
+        {
+            <div>
+                <p>First Name: @SelectedEmployee.FirstName</p>
+                <p>Last Name: @SelectedEmployee.SurName</p>
+                <button class="btn btn-danger" @onclick="() => RemoveEmployee(SelectedEmployee.Id)">Kiléptetés</button>
+            </div>
+        }
+    </div>
+</div>
+
+
+
+
+@code {
+
+    [Parameter]
+    public string SurName { get; set; }
+    [Parameter]
+    public string FirstName { get; set; }
+    [Parameter]
+    public string Email { get; set; }
+
+    public string UserName { get; set; }
+    private string Message { get; set; }
+    [Inject] private NavigationManager NavigationManager { get; set; }
+
+    List<Employee> employees = new List<Employee>();
+
+    private string SelectedEmail;
+    private Employee SelectedEmployee;
+
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        employees = _databaseHandler.GetAllEmployees();
+
+    }
+
+    private void UpdateSelectedEmployee(ChangeEventArgs e)
+    {
+        SelectedEmail = e.Value.ToString();
+        if (!string.IsNullOrEmpty(SelectedEmail))
+        {
+            SelectedEmployee = employees.FirstOrDefault(emp => emp.Id == int.Parse(SelectedEmail));
+        }
+    }
+
+    public void RemoveEmployee(int selectedEmployeeId)
+    {
+        try
+        {
+
+            _databaseHandler.DeleteEmployee(employees[selectedEmployeeId]);
+            Message = "A munkavállaló kiléptetése sikeres.";
+
+        }
+        catch (Exception ex)
+        {
+            Message = $"Hiba a kiléptetésnél: {ex.Message}";
+        }
+
+        Task.Delay(3000).ContinueWith(t =>
+        {
+            Message = string.Empty;
+            NavigationManager.NavigateTo("/");
+        });
+    }
+}
+

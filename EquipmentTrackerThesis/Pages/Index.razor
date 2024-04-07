@@ -4,6 +4,8 @@
 @using EquipmentTrackerThesis.Database.Models;
 @using EquipmentTrackerThesis.Pages.Components;
 @inject DatabaseHandler _databaseHandler;
+@inject DatabaseContext _dbcontext;
+<!--inject SignInCheck signInCheck-->
 
 
 <PageTitle>Személyes adatok</PageTitle>
@@ -48,6 +50,7 @@
     int z = 0; // az adott felhasználó száma
     int supervisor, pos;
 
+    private string selectedEmail = "";
     List<Employee> employees = new List<Employee>();
     List<JobTitle> jobTitle = new List<JobTitle>();
     Employee employee = new Employee();
@@ -87,6 +90,20 @@
             boss = " - ";
         }
         supervisor = x.Supervisor;
+
+        //admin felhasználó hozzáadása
+        /*Login xy = new Login();
+        xy.Username = "admin";
+        xy.Password = _dbcontext.HashPassword("admin");
+        xy.LastLogin = DateTime.Now;
+        _databaseHandler.AddNewLogin(xy);*/
+
+        /*Login xy = new Login();
+        xy.Username = employees[0].Email;
+        xy.Password = _dbcontext.HashPassword("LFBQ2A");
+        xy.LastLogin = DateTime.Now;
+        _databaseHandler.AddNewLogin(xy);*/
+
     }
 
     private ModalDialogWindow modalDialogWindow { get; set; }
@@ -105,9 +122,31 @@
         modalDialogWindow.Open(employee);
     }
 
+    /*protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var employees = _databaseHandler.GetAllEmployees();
+            var employeeEmails = employees.Select(x => x.Email).ToList();
+
+            //existedEmployeesDepartment = employees.Select(x => x.Employee.Department).ToList();
+
+            selectedEmail = signInCheck.CurrentEmployee?.Employee.Email;
+            if (string.IsNullOrEmpty(signInCheck.CurrentEmployee?.Employee.Email) == false)
+            {
+                var selectedEmployeModel = employees.FirstOrDefault(x => x.Email == selectedEmail).Id;
+                if (selectedEmployeModel != null)
+                {
+                    //var projects = _dbHandler.GetAllProjectsOfEmployee(selectedEmployeModel).ToArray();
+                    //employeesProjects = projects.Select(x => new ProjectRenderModel(x)).ToArray();
+                }
+            }
+            StateHasChanged();
+        }
+    }*/
 
 
-        //TODO: hibára áll ki, ha bármelyik sorban NULL érték van, kezelni kell!
+    //TODO: hibára áll ki, ha bármelyik sorban NULL érték van, kezelni kell!
         //TODO: kezeni az idegen kulcsok mitti törlés tiltását hozzá tartozó hibaüzenettel
 
             /*AccessCard x = new AccessCard();

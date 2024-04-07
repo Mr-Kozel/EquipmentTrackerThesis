@@ -4,11 +4,12 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using EquipmentTrackerThesis.Database.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 //Login page
-//builder.Services.AddSingleton<EquipmentTrackerThesis.ILocalStorage, EquipmentTrackerThesis.LocalStorage>();
+builder.Services.AddSingleton<EquipmentTrackerThesis.ILocalStorage, EquipmentTrackerThesis.LocalStorage>();
 //Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
@@ -18,6 +19,7 @@ builder.Services.AddDbContext<DatabaseContext>(options =>
     options.UseSqlServer("Server=localhost; DataBase=ManagementSystemDB; Trusted_connection=True;");
 });
 builder.Services.AddTransient<DatabaseHandler>();
+builder.Services.AddScoped<SignInCheck>();
 
 var app = builder.Build();
 

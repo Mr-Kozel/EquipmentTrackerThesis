@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.JSInterop;
+using static Microsoft.AspNetCore.Razor.Language.TagHelperMetadata;
 
-/*namespace EquipmentTrackerThesis
+namespace EquipmentTrackerThesis
 {
 
     public interface ILocalStorage
@@ -15,58 +16,58 @@ using Microsoft.JSInterop;
         /// Remove a key from browser local storage.
         /// </summary>
         /// <param name="key">The key previously used to save to local storage.</param>
-        public Task RemoveAsync(string key);
+        public Task RemoveAsync(string key, IJSRuntime jsruntime);
 
         /// <summary>
         /// Save a string value to browser local storage.
         /// </summary>
         /// <param name="key">The key to use to save to and retrieve from local storage.</param>
         /// <param name="value">The string value to save to local storage.</param>
-        public Task SaveStringAsync(string key, string value);
+        public Task SaveStringAsync(string key, string value, IJSRuntime jsruntime);
 
         /// <summary>
         /// Get a string value from browser local storage.
         /// </summary>
         /// <param name="key">The key previously used to save to local storage.</param>
         /// <returns>The string previously saved to local storage.</returns>
-        public Task<string> GetStringAsync(string key);
+        public Task<string> GetStringAsync(string key, IJSRuntime jsruntime);
 
         /// <summary>
         /// Save an array of string values to browser local storage.
         /// </summary>
         /// <param name="key">The key previously used to save to local storage.</param>
         /// <param name="values">The array of string values to save to local storage.</param>
-        public Task SaveStringArrayAsync(string key, string[] values);
+        public Task SaveStringArrayAsync(string key, string[] values, IJSRuntime jsruntime);
 
         /// <summary>
         /// Get an array of string values from browser local storage.
         /// </summary>
         /// <param name="key">The key previously used to save to local storage.</param>
         /// <returns>The array of string values previously saved to local storage.</returns>
-        public Task<string[]> GetStringArrayAsync(string key);
+        public Task<string[]> GetStringArrayAsync(string key, IJSRuntime jsruntime);
     }
 
 
     public class LocalStorage : ILocalStorage
     {
-        private readonly IJSRuntime jsruntime;
+        /*private readonly IJSRuntime jsruntime;
         public LocalStorage(IJSRuntime jSRuntime)
         {
             jsruntime = jSRuntime;
-        }
+        }*/
 
-        public async Task RemoveAsync(string key)
+        public async Task RemoveAsync(string key, IJSRuntime jsruntime)
         {
             await jsruntime.InvokeVoidAsync("localStorage.removeItem", key).ConfigureAwait(false);
         }
 
-        public async Task SaveStringAsync(string key, string value)
+        public async Task SaveStringAsync(string key, string value, IJSRuntime jsruntime)
         {
             var compressedBytes = await Compressor.CompressBytesAsync(Encoding.UTF8.GetBytes(value));
             await jsruntime.InvokeVoidAsync("localStorage.setItem", key, Convert.ToBase64String(compressedBytes)).ConfigureAwait(false);
         }
 
-        public async Task<string> GetStringAsync(string key)
+        public async Task<string> GetStringAsync(string key, IJSRuntime jsruntime)
         {
             var str = await jsruntime.InvokeAsync<string>("localStorage.getItem", key).ConfigureAwait(false);
             if (str == null)
@@ -75,14 +76,14 @@ using Microsoft.JSInterop;
             return Encoding.UTF8.GetString(bytes);
         }
 
-        public async Task SaveStringArrayAsync(string key, string[] values)
+        public async Task SaveStringArrayAsync(string key, string[] values, IJSRuntime jsruntime)
         {
-            await SaveStringAsync(key, values == null ? "" : string.Join('\0', values));
+            await SaveStringAsync(key, values == null ? "" : string.Join('\0', values), jsruntime);
         }
 
-        public async Task<string[]> GetStringArrayAsync(string key)
+        public async Task<string[]> GetStringArrayAsync(string key, IJSRuntime jsruntime)
         {
-            var data = await GetStringAsync(key);
+            var data = await GetStringAsync(key, jsruntime);
             if (!string.IsNullOrEmpty(data))
             return data.Split('\0');
             return null;
@@ -118,4 +119,4 @@ using Microsoft.JSInterop;
             }
         }
     }
-}*/
+}
