@@ -1,12 +1,13 @@
 ﻿@page "/devices"
-
-<PageTitle>Céges eszközök</PageTitle>
-
 @using EquipmentTrackerThesis.Data
 @using EquipmentTrackerThesis.Database;
 @using EquipmentTrackerThesis.Database.Models;
 @inject DatabaseHandler _databaseHandler;
-<!--inject WeatherForecastService ForecastService--->
+@inject DatabaseContext _dbcontext;
+@inject SignInCheck signInCheck
+@inject NavigationManager navigationmanager
+
+<PageTitle>Céges eszközök</PageTitle>
 
 <h1> @employee[x].SurName @employee[x].FirstName eszközei</h1>
 
@@ -53,13 +54,20 @@ else
 @code {
     List<Devices> stuff = new List<Devices>();
     List<Employee> employee = new List<Employee>();
-    int x = 0;
+    int x = 0; //signed in employee
     string searchTerm = "";
     List<Devices> filteredDevices = new List<Devices>();
     public string UserName { get; set; }
 
     protected override void OnInitialized()
     {
+        if (signInCheck.CurrentEmployee == null)
+        {
+            // Redirect to home page on successful login
+
+            navigationmanager.NavigateTo("/");
+        }
+
         stuff = _databaseHandler.GetAllDevices();
         employee = _databaseHandler.GetAllEmployees();
         filteredDevices = stuff;

@@ -5,6 +5,9 @@
 @using EquipmentTrackerThesis.Database.Models;
 @using Microsoft.AspNetCore.Components
 @inject DatabaseHandler _databaseHandler;
+@inject DatabaseContext _dbcontext;
+@inject SignInCheck signInCheck
+@inject NavigationManager navigationmanager
 
 <h3>Munkavállaló kiléptetése</h3>
 <div class="AddEmployee" role="document">
@@ -63,6 +66,13 @@
 
     protected override void OnInitialized()
     {
+        if (signInCheck.CurrentEmployee == null)
+        {
+            // Redirect to home page on successful login
+
+            navigationmanager.NavigateTo("/");
+        }
+
         base.OnInitialized();
 
         employees = _databaseHandler.GetAllEmployees();

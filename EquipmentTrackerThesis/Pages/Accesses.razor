@@ -1,7 +1,11 @@
 ﻿@page "/accesses"
+@using EquipmentTrackerThesis.Data;
 @using EquipmentTrackerThesis.Database;
 @using EquipmentTrackerThesis.Database.Models;
 @inject DatabaseHandler _databaseHandler;
+@inject DatabaseContext _dbcontext;
+@inject SignInCheck signInCheck;
+@inject NavigationManager navigationmanager;
 
 <PageTitle>Jogosultságok</PageTitle>
 
@@ -65,18 +69,40 @@
     public string firstName;
     public string surName;
     public int employee;
+    private string selectedEmail = "";
     public string UserName { get; set; }
 
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var employees = _databaseHandler.GetAllEmployees();
+            var employeeEmails = employees.Select(x => x.Email).ToList();
+
+            selectedEmail = signInCheck.CurrentEmployee?.Employee.Email;
+            if (string.IsNullOrEmpty(signInCheck.CurrentEmployee?.Employee.Email) == false)
+            {
+                employee = employees.FirstOrDefault(x => x.Email == selectedEmail).Id;
+            }
+            StateHasChanged();
+        }
+    }
 
     protected override void OnInitialized()
     {
+        if (signInCheck.CurrentEmployee == null)
+        {
+            // Redirect to home page on successful login
+            navigationmanager.NavigateTo("/");
+        }
+
         base.OnInitialized();
 
         var accessCards = _databaseHandler.GetAllAccessCards();
         var employees = _databaseHandler.GetAllEmployees();
         var jobTitles = _databaseHandler.GetAllJobTitles();
 
-        employee = 0;
+        //employee = 0;
         accessCardId = jobTitles[employees[employee].JobTitle-5000].AccessCardType-1000;
         
         surName = employees[employee].SurName;

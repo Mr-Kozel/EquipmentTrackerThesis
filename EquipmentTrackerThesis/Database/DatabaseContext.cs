@@ -71,11 +71,11 @@ namespace EquipmentTrackerThesis.Database
             }
             else
             {
-                var employee = Employee.FirstOrDefault(employee => employee.Id == currentEmployee.Id);
+                var employee = Employee.FirstOrDefault(employee => employee.Id == currentEmployee.Id-1);
                 var employees = dbHandler.GetAllEmployees();
                 return new EmployeeModel
                 {
-                    Employee = employees[currentEmployee.Id],
+                    Employee = employees[(currentEmployee.Id-1)],
                     Username = username
                 };
             }

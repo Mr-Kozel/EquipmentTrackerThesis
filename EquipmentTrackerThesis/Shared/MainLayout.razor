@@ -1,21 +1,26 @@
-﻿@inherits LayoutComponentBase
+﻿@using EquipmentTrackerThesis.Data;
+@using EquipmentTrackerThesis.Database;
+@inherits LayoutComponentBase
 
 @inject EquipmentTrackerThesis.ILocalStorage LocalStorage
 @inject IJSRuntime JSRuntime
+@inject DatabaseHandler _dbHandler
+@inject SignInCheck signInCheck
+@inject NavigationManager navigationmanager
 
 <CascadingValue Value="this">
 
-<PageTitle>EquipmentTrackerThesis</PageTitle>
+    <PageTitle>EquipmentTrackerThesis</PageTitle>
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+    <div class="page">
+        <div class="sidebar">
+            <NavMenu />
+        </div>
 
-    <main>
-        <div class="top-row px-4">
+        <main>
+            <div class="top-row px-4">
                 <!--<a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>-->
-                <div style="width:70px;text-align:right;">
+                <div style="width:150px;text-align:right;">
                     @if (loggedIn)
                     {
                         <a class="btn btn-sm btn-primary text-white" title="Account" href="account"><span class="oi oi-key"></span></a>
@@ -25,95 +30,123 @@
                     {
                         <button class="btn btn-sm btn-success" title="Login" @onclick="OpenLogin"><span class="oi oi-account-login"></span></button>
                     }
-				</div>
-        </div>
+                </div>
+            </div>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+            <article class="content px-4">
+                @Body
+            </article>
+        </main>
+    </div>
 
 </CascadingValue>
 
 <div class="modal-backdrop fade @(show ? "show" : "") @(display ? "d-block" : "d-none")"></div>
 
 <div class="modal fade @(show ? "show" : "")  @(display ? "d-block" : "d-none")" tabindex="-1" role="dialog">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title">Login Form</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<div class="mb-3">
-					<label for="loginEmail" class="form-label">Email</label>
-					<input type="email" class="form-control" id="loginEmail" placeholder="name@example.com" autocomplete="off" required @bind-value="user" />
-				</div>
-				<div class="mb-3">
-					<label for="loginPassword" class="form-label">Password</label>
-					<input type="password" class="form-control" id="loginPassword" required />
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-success" @onclick="Login">Login</button>
-				<button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Close">Close</button>
-			</div>
-		</div>
-	</div>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Bejelentkezés</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="loginEmail" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="loginEmail" placeholder="name@vallalat.hu" autocomplete="off" required @bind-value="user" />
+                </div>
+                <div class="mb-3">
+                    <label for="loginPassword" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="loginPassword" required @bind-value="password" />
+                </div>
+                @if (errorMessage == "A felhasználónév és/vagy a jelszó helytelen!")
+                {
+                    <span class="alert alert-danger" role="alert">@errorMessage</span>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" @onclick="Login">Login</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Close">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 @code {
 
-	private bool show, display, loggedIn;
-	private string? user;
+    private bool show, display, loggedIn;
+    private string? user, password;
+    private string errorMessage;
 
-	public string? GetUserName()
-	{
-		return loggedIn ? user : null;
-	}
+    public string? GetUserName()
+    {
+        return loggedIn ? user : null;
+    }
 
-	public async Task OpenLogin()
-	{
-		display = true;
-		await Task.Delay(100);
-		show = true;
-	}
+    public async Task OpenLogin()
+    {
+        display = true;
+        await Task.Delay(100);
+        show = true;
+    }
 
-	public async Task Logout()
-	{
-		user = null;
-		loggedIn = false;
-		await LocalStorage.RemoveAsync("user", JSRuntime);
-	}
+    public async Task Logout()
+    {
+        user = null;
+        loggedIn = false;
+        await LocalStorage.RemoveAsync("user", JSRuntime);
+        navigationmanager.NavigateTo("/");
+    }
 
-	private async Task Close()
-	{
-		show = false;
-		await Task.Delay(500);
-		display = false;
-	}
+    private async Task Close()
+    {
+        show = false;
+        await Task.Delay(500);
+        display = false;
+    }
 
-	private async Task Login()
-	{
-		if (!string.IsNullOrEmpty(user))
-		{
-			await Close();
-			loggedIn = true;
-			await LocalStorage.SaveStringAsync("user", user, JSRuntime);
-		}
-	}
+    private async Task Login()
+    {
+        if (!string.IsNullOrEmpty(user))
+        {
+            SignIn();
+            await Close();
+        }
+    }
 
-	protected override async Task OnAfterRenderAsync(bool firstRender)
-	{
-		if (firstRender)
-		{
-			// Pass JSRuntime to GetStringAsync method call
-			user = await LocalStorage.GetStringAsync("user", JSRuntime);
-			loggedIn = !string.IsNullOrEmpty(user);
-			StateHasChanged();
-		}
-	}
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Pass JSRuntime to GetStringAsync method call
+            user = await LocalStorage.GetStringAsync("user", JSRuntime);
+            loggedIn = !string.IsNullOrEmpty(user);
+            if (!loggedIn)
+            {
+                await LocalStorage.RemoveAsync("user", JSRuntime);
+            }
+            StateHasChanged();
+        }
+    }
+    private void SignIn()
+    {
+        bool isAuthenticated = signInCheck.SignInAttempt(user, password);
+        if (isAuthenticated)
+        {
+            var logins = _dbHandler.GetAllLogins();
+            var currentLogin = logins.First(x => x.Username == user);
+            currentLogin.LastLogin = DateTime.Now;
+            _dbHandler.UpdateLogin(currentLogin);
+
+            loggedIn = true;
+            LocalStorage.SaveStringAsync("user", user, JSRuntime);
+            navigationmanager.NavigateTo("/account");
+        }
+        else
+        {
+            errorMessage = "A felhasználónév és/vagy a jelszó helytelen!";
+        }
+    }
 }

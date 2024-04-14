@@ -9,7 +9,12 @@
 
   <ItemGroup>
     <Compile Remove="Database\UserDatabase.cs" />
+    <Compile Remove="Pages\Index.cshtml.cs" />
     <Compile Remove="Shared\AuthModel.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Shared\SurveyPrompt.razor" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,4 @@
-﻿@page "/account"
+﻿@page "/"
 @using EquipmentTrackerThesis.Data;
 @using EquipmentTrackerThesis.Database;
 @using Microsoft.EntityFrameworkCore.Metadata.Internal
@@ -8,7 +8,7 @@
 
 <PageTitle>Account</PageTitle>
 
-<!---@if (!string.IsNullOrEmpty(mainLayout.GetUserName()))
+@if (!string.IsNullOrEmpty(mainLayout.GetUserName()))
 {
     <h3 class="my-4">Saját fiók</h3>
 
@@ -21,41 +21,13 @@ else
     <h3 class="my-4">Kérem lépjen be</h3>
 
     <button type="button" class="btn btn-success" @onclick="mainLayout.OpenLogin">Belépés</button>
-}-->
-<div class="form">
-    <h3>Login</h3>
-
-    <label for="username">Username</label>
-    <input type="username" id="username" @bind="@(username)" name="username" placeholder="Enter your username" required>
-
-    <label for="password">Password</label>
-    <input type="password" id="password" @bind="@(password)" required>
-    <span>@errorMessage</span>
-
-    <br />
-    <button class="btn btn-primary prl-btn" @onclick="Login">Log in</button>
-</div>
+}
 
 @code {
-    private string username;
-    private string password;
+    
     private string errorMessage;
 
     [CascadingParameter]
     public MainLayout mainLayout { get; set; }
-
-    private void Login()
-    {
-        bool isAuthenticated = signInCheck.SignInAttempt(username, password);
-        if (isAuthenticated)
-        {
-            // Redirect to home page on successful login
-            navigationmanager.NavigateTo("/");
-        }
-        else
-        {
-            errorMessage = "The username and/or the password is incorrect!";
-        }
-    }
     
 }

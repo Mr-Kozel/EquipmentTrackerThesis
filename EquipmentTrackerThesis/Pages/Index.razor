@@ -1,11 +1,12 @@
-﻿@page "/" 
+﻿@page "/account"
 @using EquipmentTrackerThesis.Data;
 @using EquipmentTrackerThesis.Database;
 @using EquipmentTrackerThesis.Database.Models;
 @using EquipmentTrackerThesis.Pages.Components;
 @inject DatabaseHandler _databaseHandler;
 @inject DatabaseContext _dbcontext;
-<!--inject SignInCheck signInCheck-->
+@inject SignInCheck signInCheck
+@inject NavigationManager navigationmanager
 
 
 <PageTitle>Személyes adatok</PageTitle>
@@ -16,7 +17,7 @@
 
     <div class="d-flex flex-culomn">
         <!--Kell majd 1-1 basic kép ide-->
-        <img src=@(location) style="width: 120px"/>
+        <img src=@(location) style="width: 120px" />
         <br />
         Név: @(name)
         <br />
@@ -34,7 +35,7 @@
         Munkaköri leírás
         <br />
         @(description)
-        
+
     </div>
 
 </div>
@@ -44,10 +45,10 @@
 
 <ModalDialogWindow @ref="modalDialogWindow"></ModalDialogWindow>
 
-@code{
+@code {
     string location, firstName, surName, name, position, email, phone, boss, boss1, boss2, description;
     bool gender;
-    int z = 0; // az adott felhasználó száma
+    int z; // az adott felhasználó száma
     int supervisor, pos;
 
     private string selectedEmail = "";
@@ -57,10 +58,24 @@
 
     protected override void OnInitialized()
     {
+        if (signInCheck.CurrentEmployee == null)
+        {
+            navigationmanager.NavigateTo("/");
+        }
         base.OnInitialized();
 
+        selectedEmail = signInCheck.CurrentEmployee?.Employee.Email;
         employees = _databaseHandler.GetAllEmployees();
         jobTitle = _databaseHandler.GetAllJobTitles();
+                
+        var employeeEmails = employees.Select(x => x.Email).ToList();
+
+        //selectedEmail = signInCheck.CurrentEmployee?.Employee.Email;
+        if (string.IsNullOrEmpty(signInCheck.CurrentEmployee?.Employee.Email) == false)
+        {
+            z = employees.FirstOrDefault(x => x.Email == selectedEmail).Id-1;
+        }
+
         var x = employees[z];
         employee = x;
 
@@ -84,33 +99,19 @@
         firstName = x.FirstName;
         surName = x.SurName;
         gender = x.Gender;
-        boss = boss1 + " " + boss2; 
+        boss = boss1 + " " + boss2;
         if (boss == name)
         {
             boss = " - ";
         }
         supervisor = x.Supervisor;
-
-        //admin felhasználó hozzáadása
-        /*Login xy = new Login();
-        xy.Username = "admin";
-        xy.Password = _dbcontext.HashPassword("admin");
-        xy.LastLogin = DateTime.Now;
-        _databaseHandler.AddNewLogin(xy);*/
-
-        /*Login xy = new Login();
-        xy.Username = employees[0].Email;
-        xy.Password = _dbcontext.HashPassword("LFBQ2A");
-        xy.LastLogin = DateTime.Now;
-        _databaseHandler.AddNewLogin(xy);*/
-
     }
 
     private ModalDialogWindow modalDialogWindow { get; set; }
 
     private void Modify(Employee employee)
     {
-        modalDialogWindow.Title = $"Szerkesztés";
+        modalDialogWindow.Title = "Szerkesztés";
         modalDialogWindow.FirstName = firstName;
         modalDialogWindow.SurName = surName;
         modalDialogWindow.Email = email;
@@ -122,78 +123,66 @@
         modalDialogWindow.Open(employee);
     }
 
-    /*protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
-        {
-            var employees = _databaseHandler.GetAllEmployees();
-            var employeeEmails = employees.Select(x => x.Email).ToList();
-
-            //existedEmployeesDepartment = employees.Select(x => x.Employee.Department).ToList();
-
-            selectedEmail = signInCheck.CurrentEmployee?.Employee.Email;
-            if (string.IsNullOrEmpty(signInCheck.CurrentEmployee?.Employee.Email) == false)
-            {
-                var selectedEmployeModel = employees.FirstOrDefault(x => x.Email == selectedEmail).Id;
-                if (selectedEmployeModel != null)
-                {
-                    //var projects = _dbHandler.GetAllProjectsOfEmployee(selectedEmployeModel).ToArray();
-                    //employeesProjects = projects.Select(x => new ProjectRenderModel(x)).ToArray();
-                }
-            }
-            StateHasChanged();
-        }
-    }*/
-
-
     //TODO: hibára áll ki, ha bármelyik sorban NULL érték van, kezelni kell!
-        //TODO: kezeni az idegen kulcsok mitti törlés tiltását hozzá tartozó hibaüzenettel
+    //TODO: kezeni az idegen kulcsok mitti törlés tiltását hozzá tartozó hibaüzenettel
 
-            /*AccessCard x = new AccessCard();
-            x.MainBuilding = true;
-            x.Laboratory = false;
-            x.ProductionSite = true;
-            x.ProductionSite = false;
-            x.HazardWarehouse = true;
-            x.DevelopementCenter = false;
-            x.CountrysideSite = false;
+    /*AccessCard x = new AccessCard();
+    x.MainBuilding = true;
+    x.Laboratory = false;
+    x.ProductionSite = true;
+    x.ProductionSite = false;
+    x.HazardWarehouse = true;
+    x.DevelopementCenter = false;
+    x.CountrysideSite = false;
 
-            _databaseHandler.AddNewAccessCard(x); 
-            var accessCards = _databaseHandler.GetAllAccessCards();
-            bool z = accessCards[1].Laboratory;
-            _databaseHandler.DeleteAccessCard(accessCards[7]);*/
+    _databaseHandler.AddNewAccessCard(x);
+    var accessCards = _databaseHandler.GetAllAccessCards();
+    bool z = accessCards[1].Laboratory;
+    _databaseHandler.DeleteAccessCard(accessCards[7]);*/
 
-            /*Devices x = new Devices();
-            x.SerialNumber = "51654132516sdf";
-            x.Type = "Tablet";
-            x.PurchaseDate = new DateTime(2024, 2, 28);
+    /*Devices x = new Devices();
+    x.SerialNumber = "51654132516sdf";
+    x.Type = "Tablet";
+    x.PurchaseDate = new DateTime(2024, 2, 28);
 
-            _databaseHandler.AddNewDevice(x);
-            var devices = _databaseHandler.GetAllDevices();
-            string z = devices[1].Type;
-            _databaseHandler.DeleteDevice(devices[5]);*/
+    _databaseHandler.AddNewDevice(x);
+    var devices = _databaseHandler.GetAllDevices();
+    string z = devices[1].Type;
+    _databaseHandler.DeleteDevice(devices[5]);*/
 
-            /*Employee x = new Employee();
-            x.SurName = "Próba";
-            x.FirstName = "Mihály";
-            x.Email = "proba@proba.hu";
-            x.JobTitle = 5004;
-            x.Supervisor = 3;
+    /*Employee x = new Employee();
+    x.SurName = "Próba";
+    x.FirstName = "Mihály";
+    x.Email = "proba@proba.hu";
+    x.JobTitle = 5004;
+    x.Supervisor = 3;
 
-            _databaseHandler.AddNewEmployee(x);
-            var employee = _databaseHandler.GetAllEmployees();
-            string z = employee[1].FirstName;
-            _databaseHandler.DeleteEmployee(employee[3]);*/
+    _databaseHandler.AddNewEmployee(x);
+    var employee = _databaseHandler.GetAllEmployees();
+    string z = employee[1].FirstName;
+    _databaseHandler.DeleteEmployee(employee[3]);*/
 
-            /*JobTitle x = new JobTitle();
-            x.Description = "Sofőr";
-            x.AccessCardType = 1004;
+    /*JobTitle x = new JobTitle();
+    x.Description = "Sofőr";
+    x.AccessCardType = 1004;
 
-            _databaseHandler.AddNewJobTitle(x);
-            var jobTitle = _databaseHandler.GetAllJobTitles();
-            string z = jobTitle[1].Description;
-            _databaseHandler.DeleteJobTitle(jobTitle[3]);*/
+    _databaseHandler.AddNewJobTitle(x);
+    var jobTitle = _databaseHandler.GetAllJobTitles();
+    string z = jobTitle[1].Description;
+    _databaseHandler.DeleteJobTitle(jobTitle[3]);*/
 
-        
-    
+
+    //admin felhasználó hozzáadása
+    /*Login xy = new Login();
+    xy.Username = "admin";
+    xy.Password = _dbcontext.HashPassword("admin");
+    xy.LastLogin = DateTime.Now;
+    _databaseHandler.AddNewLogin(xy);*/
+
+    /*Login xy = new Login();
+    xy.Username = employees[0].Email;
+    xy.Password = _dbcontext.HashPassword("LFBQ2A");
+    xy.LastLogin = DateTime.Now;
+    _databaseHandler.AddNewLogin(xy);*/
+
 }

@@ -5,6 +5,9 @@
 @using EquipmentTrackerThesis.Database.Models;
 @using Microsoft.AspNetCore.Components
 @inject DatabaseHandler _databaseHandler;
+@inject DatabaseContext _dbcontext;
+@inject SignInCheck signInCheck
+@inject NavigationManager navigationmanager
 
 <h3>Új munkavállaló hozzáadása</h3>
 <div class="AddEmployee" role="document">
@@ -58,7 +61,21 @@
                 </div>
             </div>
         </div>
-        @if (!string.IsNullOrEmpty(Message))
+        <div class="form-group">
+            <label for="password">Jelszó:</label>
+            <input type="password" class="form-control" id="password" name="password" @bind="Password">
+        </div>
+        <div class="form-group">
+            <label for="passwordCheck">Jelszó megerőssítése:</label>
+            <input type="password" class="form-control" id="passwordCheck" name="passwordCheck" @bind="PasswordCheck">
+        </div>
+        @if (Message == "A jelszavak nem egyeznek meg.")
+        {
+            <div class="alert alert-danger" role="alert">
+                @Message
+            </div>
+        }
+        @if (Message == "Az új munkavállaló hozzáadása sikeres.")
         {
             <div class="alert alert-success" role="alert">
                 @Message
@@ -89,6 +106,10 @@
     public int Supervisor { get; set; }
     [Parameter]
     public bool Gender { get; set; }
+    [Parameter]
+    public string Password { get; set; }
+    [Parameter]
+    public string PasswordCheck { get; set; }
 
     private string Message { get; set; }
     public string UserName { get; set; }
@@ -103,6 +124,13 @@
 
     protected override void OnInitialized()
     {
+        if (signInCheck.CurrentEmployee == null)
+        {
+            // Redirect to home page on successful login
+
+            navigationmanager.NavigateTo("/");
+        }
+
         base.OnInitialized();
 
         employees = _databaseHandler.GetAllEmployees();
@@ -114,8 +142,14 @@
     {
         try
         {
+            if (Password != PasswordCheck)
+            {
+                Message = "A jelszavak nem egyeznek meg.";
+                return;
+            }
 
             Employee Employee = new Employee();
+            Login Login = new Login();
 
             Employee.SurName = SurName;
             Employee.FirstName = FirstName;
@@ -125,13 +159,22 @@
             Employee.Supervisor = SelectedSupervisorId;
             Employee.JobTitle = SelectedJobTitleId;
 
+            Login.Username = Email;
+            Login.Password = _dbcontext.HashPassword(Password);
+            Login.LastLogin = new DateTime(2022,1,1);
+
             _databaseHandler.AddNewEmployee(Employee);
+            _databaseHandler.AddNewLogin(Login);
+
             Message = "Az új munkavállaló hozzáadása sikeres.";
         }
         catch (Exception ex)
         {
             Message = $"Hiba a hozzáadásnál: {ex.Message}";
         }
+
+        Password = string.Empty;
+        PasswordCheck = string.Empty;
 
         Task.Delay(3000).ContinueWith(t =>
         {
