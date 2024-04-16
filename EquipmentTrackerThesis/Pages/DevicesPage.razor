@@ -2,6 +2,7 @@
 @using EquipmentTrackerThesis.Data
 @using EquipmentTrackerThesis.Database;
 @using EquipmentTrackerThesis.Database.Models;
+@using EquipmentTrackerThesis.Pages.Components;
 @inject DatabaseHandler _databaseHandler;
 @inject DatabaseContext _dbcontext;
 @inject SignInCheck signInCheck
@@ -14,9 +15,13 @@
 <div class="search-container">
     <input type="text" value="@searchTerm" @oninput="HandleInput" placeholder="Keresés...">
     <button class="btn btn-primary" @onclick="FilterDevices">Keresés</button>
+    <button class="btn btn-primary" @onclick="AddNewDevice">Új eszköz hozzáadása</button>
+
 </div>
 
-@if (stuff == null)
+<ModalDialogWindowToAdd @ref="modalDialogWindowToAdd"></ModalDialogWindowToAdd>
+
+@if (devices == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -44,7 +49,14 @@ else
                     <td>@dev.PurchaseDate.Date.ToString("yyyy.MM.dd.")</td>
                     <td>@employee[dev.Owner-1].SurName @employee[dev.Owner-1].FirstName</td>
                     <td>@dev.ReceptionDate.Date.ToString("yyyy.MM.dd.")</td>
-                    <td>@dev.ReturnDate.Date.ToString("yyyy.MM.dd.")</td>
+                    @if (dev.ReceptionDate == dev.ReturnDate)
+                    {
+                        <td>-</td>
+                    }
+                    else
+                    {
+                        <td>@dev.ReturnDate.Date.ToString("yyyy.MM.dd.")</td>
+                    }
                 </tr>
             }
         </tbody>
@@ -52,25 +64,25 @@ else
 }
 
 @code {
-    List<Devices> stuff = new List<Devices>();
+    List<Devices> devices = new List<Devices>();
     List<Employee> employee = new List<Employee>();
+    List<Devices> filteredDevices = new List<Devices>();
+    private ModalDialogWindowToAdd modalDialogWindowToAdd { get; set; }
     int x = 0; //signed in employee
     string searchTerm = "";
-    List<Devices> filteredDevices = new List<Devices>();
-    public string UserName { get; set; }
+    //public string UserName { get; set; }
+
 
     protected override void OnInitialized()
     {
         if (signInCheck.CurrentEmployee == null)
         {
-            // Redirect to home page on successful login
-
+            // Redirect to index (your personal account) page on successful login
             navigationmanager.NavigateTo("/");
         }
-
-        stuff = _databaseHandler.GetAllDevices();
+        devices = _databaseHandler.GetAllDevices();
         employee = _databaseHandler.GetAllEmployees();
-        filteredDevices = stuff;
+        filteredDevices = devices;
     }
 
     protected void HandleInput(ChangeEventArgs e)
@@ -82,11 +94,11 @@ else
     {
         if (string.IsNullOrWhiteSpace(searchTerm))
         {
-            filteredDevices = stuff;
+            filteredDevices = devices;
         }
         else
         {
-            filteredDevices = stuff.Where(dev =>
+            filteredDevices = devices.Where(dev =>
                 dev.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
                 dev.SerialNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
                 dev.Type.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
@@ -94,5 +106,10 @@ else
                 employee[dev.Owner-1].FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
             ).ToList();
         }
+    }
+
+    public void AddNewDevice()
+    {
+        modalDialogWindowToAdd.Open();
     }
 }

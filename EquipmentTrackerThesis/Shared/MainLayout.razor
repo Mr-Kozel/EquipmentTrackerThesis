@@ -24,11 +24,11 @@
                     @if (loggedIn)
                     {
                         <a class="btn btn-sm btn-primary text-white" title="Account" href="account"><span class="oi oi-key"></span></a>
-                        <button class="btn btn-sm btn-danger" title="Logout" @onclick="Logout"><span class="oi oi-account-logout"></span></button>
+                        <button class="btn btn-sm btn-danger" title="Kilépés" @onclick="Logout"><span class="oi oi-account-logout"></span></button>
                     }
                     else
                     {
-                        <button class="btn btn-sm btn-success" title="Login" @onclick="OpenLogin"><span class="oi oi-account-login"></span></button>
+                        <button class="btn btn-sm btn-success" title="Belépés" @onclick="OpenLogin"><span class="oi oi-account-login"></span></button>
                     }
                 </div>
             </div>
@@ -48,17 +48,17 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Bejelentkezés</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Bezárás" @onclick="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label for="loginEmail" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="loginEmail" placeholder="name@vallalat.hu" autocomplete="off" required @bind-value="user" />
+                    <label for="loginEmail" class="form-label">E-mail</label>
+                    <input type="email" class="form-control" id="loginEmail" placeholder="nev@vallalat.hu" autocomplete="off" required @bind-value="user" />
                 </div>
                 <div class="mb-3">
-                    <label for="loginPassword" class="form-label">Password</label>
+                    <label for="loginPassword" class="form-label">Jelszó</label>
                     <input type="password" class="form-control" id="loginPassword" required @bind-value="password" />
                 </div>
                 @if (errorMessage == "A felhasználónév és/vagy a jelszó helytelen!")
@@ -67,8 +67,8 @@
                 }
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" @onclick="Login">Login</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Close">Close</button>
+                <button type="button" class="btn btn-success" @onclick="Login">Belépés</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="Close">Mégse</button>
             </div>
         </div>
     </div>
@@ -87,6 +87,8 @@
 
     public async Task OpenLogin()
     {
+        user = await LocalStorage.GetStringAsync("user", JSRuntime);
+
         display = true;
         await Task.Delay(100);
         show = true;
@@ -121,8 +123,8 @@
         if (firstRender)
         {
             // Pass JSRuntime to GetStringAsync method call
-            user = await LocalStorage.GetStringAsync("user", JSRuntime);
-            loggedIn = !string.IsNullOrEmpty(user);
+            //user = await LocalStorage.GetStringAsync("user", JSRuntime);
+            //loggedIn = !string.IsNullOrEmpty(user);
             if (!loggedIn)
             {
                 await LocalStorage.RemoveAsync("user", JSRuntime);

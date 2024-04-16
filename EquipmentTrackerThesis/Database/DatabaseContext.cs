@@ -75,7 +75,7 @@ namespace EquipmentTrackerThesis.Database
                 var employees = dbHandler.GetAllEmployees();
                 return new EmployeeModel
                 {
-                    Employee = employees[(currentEmployee.Id-1)],
+                    Employee = employees[(currentEmployee.Id - 1)],
                     Username = username
                 };
             }

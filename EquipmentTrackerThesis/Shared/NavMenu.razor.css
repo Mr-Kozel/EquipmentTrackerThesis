@@ -3,12 +3,13 @@
 }
 
 .top-row {
-    height: 3.5rem;
+    height: 6rem;
     background-color: rgba(0,0,0,0.4);
 }
 
 .navbar-brand {
     font-size: 1.1rem;
+    color: white;
 }
 
 .oi {

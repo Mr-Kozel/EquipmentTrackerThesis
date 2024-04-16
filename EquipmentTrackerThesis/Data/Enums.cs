@@ -3,7 +3,7 @@
     public enum ModalWindowType
     {
         Warning,
-        Information,
+        Adding,
         Error,
         Modify,
     }

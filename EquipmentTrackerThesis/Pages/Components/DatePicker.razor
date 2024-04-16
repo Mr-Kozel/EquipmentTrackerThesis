@@ -1,0 +1,27 @@
+﻿
+<div class="input-group">
+    <div class="input-group-prepend">
+        <div class="input-group-text header">@(Name)</div>
+    </div>
+    <input id="id1"
+           type="date"
+           class="form-control date-picker"
+           value="Value"
+           pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
+    @onchange="DateChanged" />
+</div>
+
+@code {
+    [Parameter]
+    public DateTime Value { get; set; }
+    [Parameter]
+    public string Name { get; set; }
+    [Parameter]
+    public EventCallback<DateTime> ValueChanged { get; set; }
+
+    private async void DateChanged(ChangeEventArgs e)
+    {
+        Value = DateTime.Parse(e.Value.ToString());
+        await ValueChanged.InvokeAsync(Value);
+    }
+}
