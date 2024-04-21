@@ -32,7 +32,7 @@
                     </div>
                     <div class="form-group">
                         <label for="pdate">Vásárlás dátuma:</label>
-                         <DatePicker Name="@("Dátum választása")" @bind-Value="@selectedPurchaseDate"></DatePicker>
+                        <DatePicker Name="@("Dátum választása")" @bind-Value="@selectedPurchaseDate"></DatePicker>
                     </div>
                     <div class="form-group">
                         <label for="owner">Tulajdonos:</label>
@@ -47,10 +47,6 @@
                         <label for="recdate">Átvétel dátuma:</label>
                         <DatePicker Name="@("Dátum választása")" @bind-Value="@selectedReceptionDate"></DatePicker>
                     </div>
-                    @*<div class="form-group">
-                        <label for="recdate">Leadás dátuma:</label>
-                        <DatePicker Name="@("Dátum választása")" @bind-Value="@selectedReturnDate"></DatePicker>
-                    </div>*@
                 </div>
             </div>
             <div class="modal-footer d-inline-block">
@@ -69,17 +65,17 @@
 
 @code {
     [Parameter]
-    public string Title { get; set; }
+    public string? Title { get; set; }
     [Parameter]
-    public string Body { get; set; }
+    public string? Body { get; set; }
     [Parameter]
     public int Assignment { get; set; }
     [Parameter]
-    public string SerialNumber { get; set; }
+    public string? SerialNumber { get; set; }
     [Parameter]
-    public string Name { get; set; }
+    public string? Name { get; set; }
     [Parameter]
-    public string Type_ { get; set; }
+    public string? Type_ { get; set; }
     [Parameter]
     public DateOnly PurchaseDate { get; set; }
     [Parameter]
@@ -89,9 +85,7 @@
     [Parameter]
     public DateOnly ReturnDate { get; set; }
     [Parameter]
-    public bool Gender { get; set; }
-    [Parameter]
-    public Devices Device { get; set; }
+    public Devices? Device { get; set; }
     private ModalWindowType _type;
     [Parameter]
     public ModalWindowType Type
@@ -108,21 +102,19 @@
     }
 
     List<string> types = new List<string>();
-
     List<Employee> employees = new List<Employee>();
     List<JobTitle> jobTitle = new List<JobTitle>();
 
     public Guid Guid = Guid.NewGuid();
     public string ModalDisplay = "none;";
     public string ModalClass = "";
-    public bool ShowBackdrop = false;
     public string selectedType = "";
+    public bool ShowBackdrop = false;
+    public int selectedOwnerId;
     DateTime selectedPurchaseDate;
     DateTime selectedReceptionDate;
-    DateTime selectedReturnDate;
-    public int selectedOwnerId;
+    //DateTime selectedReturnDate;
     
-
     public void Open()
     {
         ModalDisplay = "block;";
@@ -142,20 +134,28 @@
         ShowBackdrop = false;
         StateHasChanged();
     }
+
     public void Add()
     {
-            Device = new Devices();
+        Device = new Devices();
+        if (SerialNumber != null)
+        {
             Device.SerialNumber = SerialNumber;
-            Device.Name = Name;
-            Device.Type = selectedType;
-            Device.PurchaseDate = selectedPurchaseDate.Date;
-            Device.Owner = selectedOwnerId;
-            Device.ReceptionDate = selectedReceptionDate.Date;
-            Device.ReturnDate = selectedReceptionDate.Date;
-
-            _databaseHandler.AddNewDevice(Device);
-            Close();
         }
+        if (Name != null)
+        {
+            Device.Name = Name;
+        }
+        Device.Type = selectedType;
+        Device.PurchaseDate = selectedPurchaseDate.Date;
+        Device.Owner = selectedOwnerId;
+        Device.ReceptionDate = selectedReceptionDate.Date;
+        Device.ReturnDate = selectedReceptionDate.Date;
+        Device.Archived = false;
+
+        _databaseHandler.AddNewDevice(Device);
+        Close();
+    }
 
     private string ModalTypeToClass()
     {
@@ -165,7 +165,7 @@
             case ModalWindowType.Modify:
                 return "msg-loop-circular";
             case ModalWindowType.Adding:
-                return "msg-adding";
+                return "msg-plus";
             case ModalWindowType.Warning:
                 return "msg-warning";
             case ModalWindowType.Error:
@@ -177,8 +177,7 @@
 
     private string IconFromModalType()
     {
-        //These icons come from Open Iconic, which is part of bootstrap framework which is added automatically with Blazor
-        //You can find possibilites here: https://icon-sets.iconify.design/oi/
+        //Icons: https://icon-sets.iconify.design/oi/
         switch (Type)
         {
             case ModalWindowType.Modify:

@@ -5,21 +5,18 @@ using System.Text;
 using System.Security.Cryptography;
 using EquipmentTrackerThesis.Data;
 
-
-
 namespace EquipmentTrackerThesis.Database
 {
-    
     public class DatabaseContext : DbContext
     {
         /// <summary>
         /// 
         /// </summary>
-        public DbSet<AccessCard> AccessCard { get; set; }
-        public DbSet<Devices> Devices { get; set; }
-        public DbSet<Employee> Employee { get; set; }
-        public DbSet<JobTitle> JobTitle { get; set; }
-        public DbSet<Login> Login { get; set; }
+        public DbSet<AccessCard>? AccessCard { get; set; }
+        public DbSet<Devices>? Devices { get; set; }
+        public DbSet<Employee>? Employee { get; set; }
+        public DbSet<JobTitle>? JobTitle { get; set; }
+        public DbSet<Login>? Login { get; set; }
 
         public DatabaseContext()
         {
@@ -62,16 +59,16 @@ namespace EquipmentTrackerThesis.Database
             return System.Convert.ToBase64String(data);
         }
 
-        public EmployeeModel SignedInEmployee(string username, string hashedpass, DatabaseHandler dbHandler)
+        public EmployeeModel? SignedInEmployee(string username, string hashedpass, DatabaseHandler dbHandler)
         {
-            var currentEmployee = Login.FirstOrDefault(login => login.Username == username && login.Password == hashedpass);
+            var currentEmployee = Login?.FirstOrDefault(login => login.Username == username && login.Password == hashedpass);
             if (currentEmployee == null)
             {
                 return null;
             }
             else
             {
-                var employee = Employee.FirstOrDefault(employee => employee.Id == currentEmployee.Id-1);
+                var employee = Employee?.FirstOrDefault(employee => employee.Id == currentEmployee.Id-1);
                 var employees = dbHandler.GetAllEmployees();
                 return new EmployeeModel
                 {

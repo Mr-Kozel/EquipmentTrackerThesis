@@ -1,4 +1,5 @@
 ﻿@page "/devices"
+
 @using EquipmentTrackerThesis.Data
 @using EquipmentTrackerThesis.Database;
 @using EquipmentTrackerThesis.Database.Models;
@@ -10,16 +11,23 @@
 
 <PageTitle>Céges eszközök</PageTitle>
 
-<h1> @employee[x].SurName @employee[x].FirstName eszközei</h1>
-
 <div class="search-container">
     <input type="text" value="@searchTerm" @oninput="HandleInput" placeholder="Keresés...">
     <button class="btn btn-primary" @onclick="FilterDevices">Keresés</button>
     <button class="btn btn-primary" @onclick="AddNewDevice">Új eszköz hozzáadása</button>
+    @if (existSelectedDivice)
+    {
+        <button class="btn btn-primary" @onclick="ModifyDevice">Eszköz módosítása/eltávolítása</button>
+    }
+    else
+    {
+        <button class="btn btn-primary disabled">Eszköz módosítása/eltávolítása</button>
+    }
 
 </div>
 
 <ModalDialogWindowToAdd @ref="modalDialogWindowToAdd"></ModalDialogWindowToAdd>
+<ModalDialogWindowToRemoveDevice @ref="modalDialogWindowToRemove"></ModalDialogWindowToRemoveDevice>
 
 @if (devices == null)
 {
@@ -42,22 +50,32 @@ else
         <tbody>
             @foreach (var dev in filteredDevices)
             {
-                <tr>
-                    <td>@dev.Name</td>
-                    <td>@dev.SerialNumber</td>
-                    <td>@dev.Type</td>
-                    <td>@dev.PurchaseDate.Date.ToString("yyyy.MM.dd.")</td>
-                    <td>@employee[dev.Owner-1].SurName @employee[dev.Owner-1].FirstName</td>
-                    <td>@dev.ReceptionDate.Date.ToString("yyyy.MM.dd.")</td>
-                    @if (dev.ReceptionDate == dev.ReturnDate)
-                    {
-                        <td>-</td>
-                    }
-                    else
-                    {
-                        <td>@dev.ReturnDate.Date.ToString("yyyy.MM.dd.")</td>
-                    }
-                </tr>
+                if (dev.Archived == true)
+                {
+                    continue;
+                }
+                else
+                {
+                    <tr @onclick="() => SelectDevice(dev)"
+                    @onmouseover="() => HoverRow(true, dev)"
+                    @onmouseout="() => HoverRow(false)"
+                        class="selectable-row @((selectedDevice != null && selectedDevice.Assignment == dev.Assignment) ? "selected-row" : "") @((hoveredDevice != null && hoveredDevice.Assignment == dev.Assignment) ? "hover-row" : "")">
+                        <td>@dev.Name</td>
+                        <td>@dev.SerialNumber</td>
+                        <td>@dev.Type</td>
+                        <td>@dev.PurchaseDate.Date.ToString("yyyy.MM.dd.")</td>
+                        <td>@employee[dev.Owner].SurName @employee[dev.Owner].FirstName</td>
+                        <td>@dev.ReceptionDate.Date.ToString("yyyy.MM.dd.")</td>
+                        @if (dev.ReceptionDate == dev.ReturnDate)
+                        {
+                            <td>-</td>
+                        }
+                        else
+                        {
+                            <td>@dev.ReturnDate.Date.ToString("yyyy.MM.dd.")</td>
+                        }
+                    </tr>
+                }
             }
         </tbody>
     </table>
@@ -67,18 +85,21 @@ else
     List<Devices> devices = new List<Devices>();
     List<Employee> employee = new List<Employee>();
     List<Devices> filteredDevices = new List<Devices>();
-    private ModalDialogWindowToAdd modalDialogWindowToAdd { get; set; }
-    int x = 0; //signed in employee
-    string searchTerm = "";
-    //public string UserName { get; set; }
 
+    private ModalDialogWindowToAdd? modalDialogWindowToAdd { get; set; }
+    private ModalDialogWindowToRemoveDevice? modalDialogWindowToRemove { get; set; }
+    private Devices selectedDevice = new Devices();
+    private Devices? hoveredDevice;
+
+    string searchTerm = "";
+    bool existSelectedDivice = false;
 
     protected override void OnInitialized()
     {
-        if (signInCheck.CurrentEmployee == null)
+        if (signInCheck.CurrentEmployee == null || string.IsNullOrEmpty(signInCheck.CurrentEmployee.Username))
         {
-            // Redirect to index (your personal account) page on successful login
             navigationmanager.NavigateTo("/");
+            return;
         }
         devices = _databaseHandler.GetAllDevices();
         employee = _databaseHandler.GetAllEmployees();
@@ -87,7 +108,7 @@ else
 
     protected void HandleInput(ChangeEventArgs e)
     {
-        searchTerm = e.Value.ToString();
+        searchTerm = e.Value?.ToString() ?? string.Empty;
     }
 
     void FilterDevices()
@@ -99,17 +120,47 @@ else
         else
         {
             filteredDevices = devices.Where(dev =>
-                dev.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                dev.SerialNumber.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                dev.Type.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                employee[dev.Owner-1].SurName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                employee[dev.Owner-1].FirstName.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
-            ).ToList();
+    (dev.Name?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+    (dev.SerialNumber?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+    (dev.Type?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+    (employee.ElementAtOrDefault(dev.Owner)?.SurName?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+    (employee.ElementAtOrDefault(dev.Owner)?.FirstName?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false)
+    ).ToList();
         }
     }
 
     public void AddNewDevice()
     {
-        modalDialogWindowToAdd.Open();
+        if (modalDialogWindowToAdd != null)
+        {
+            modalDialogWindowToAdd.Open();
+        }
+    }
+
+    public void ModifyDevice()
+    {
+        if (selectedDevice != null && modalDialogWindowToRemove != null)
+        {
+            modalDialogWindowToRemove.Open(selectedDevice);
+        }
+    }
+
+    void SelectDevice(Devices device)
+    {
+        selectedDevice = device;
+        hoveredDevice = null;
+        existSelectedDivice = true;
+    }
+
+    void HoverRow(bool isHovered, Devices? device = null)
+    {
+        if (isHovered)
+        {
+            hoveredDevice = device;
+        }
+        else
+        {
+            hoveredDevice = null;
+        }
     }
 }

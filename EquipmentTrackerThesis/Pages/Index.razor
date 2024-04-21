@@ -1,4 +1,5 @@
 ﻿@page "/account"
+
 @using EquipmentTrackerThesis.Data;
 @using EquipmentTrackerThesis.Database;
 @using EquipmentTrackerThesis.Database.Models;
@@ -8,15 +9,12 @@
 @inject SignInCheck signInCheck
 @inject NavigationManager navigationmanager
 
-
 <PageTitle>Személyes adatok</PageTitle>
 
 <h1>Szia @(firstName)!</h1>
 
 <div class="d-flex flex-row justify-content-around">
-
     <div class="d-flex flex-culomn">
-        <!--Kell majd 1-1 basic kép ide-->
         <img src=@(location) style="width: 120px" />
         <br />
         Név: @(name)
@@ -27,17 +25,13 @@
         <br />
         Telefon: @(phone)
     </div>
-
     <div class="d-flex flex-culomn">
-
         Felettes: @(boss)
         <br />
         Munkaköri leírás
         <br />
         @(description)
-
     </div>
-
 </div>
 <div>
     <button class="btn btn-primary" style="white-space:nowrap" @onclick="@(()=>Modify(employee))">Szerkesztés</button>
@@ -46,34 +40,40 @@
 <ModalDialogWindow @ref="modalDialogWindow"></ModalDialogWindow>
 
 @code {
-    string location, firstName, surName, name, position, email, phone, boss, boss1, boss2, description;
-    bool gender;
-    int z; // az adott felhasználó száma
-    int supervisor, pos;
+    private ModalDialogWindow? modalDialogWindow { get; set; }
 
-    private string selectedEmail = "";
     List<Employee> employees = new List<Employee>();
     List<JobTitle> jobTitle = new List<JobTitle>();
     Employee employee = new Employee();
-
+    
+    string? location, firstName, surName, name, position, email, phone, boss, boss1, boss2, description;
+    private string selectedEmail = "";
+    bool gender;
+    int z; // az adott felhasználó száma
+    int supervisor, pos;
+    
     protected override void OnInitialized()
     {
-        if (signInCheck.CurrentEmployee == null)
+        if (signInCheck.CurrentEmployee == null || string.IsNullOrEmpty(signInCheck.CurrentEmployee.Username))
         {
             navigationmanager.NavigateTo("/");
+            return;
         }
         base.OnInitialized();
 
-        selectedEmail = signInCheck.CurrentEmployee?.Employee.Email;
+        selectedEmail = signInCheck.CurrentEmployee?.Employee.Email ?? "";
         employees = _databaseHandler.GetAllEmployees();
         jobTitle = _databaseHandler.GetAllJobTitles();
                 
         var employeeEmails = employees.Select(x => x.Email).ToList();
 
-        //selectedEmail = signInCheck.CurrentEmployee?.Employee.Email;
         if (string.IsNullOrEmpty(signInCheck.CurrentEmployee?.Employee.Email) == false)
         {
-            z = employees.FirstOrDefault(x => x.Email == selectedEmail).Id-1;
+            var foundEmployee = employees.FirstOrDefault(x => x.Email == selectedEmail);
+            if (foundEmployee != null)
+            {
+                z = foundEmployee.Id-1;
+            };
         }
 
         var x = employees[z];
@@ -107,23 +107,14 @@
         supervisor = x.Supervisor;
     }
 
-    private ModalDialogWindow modalDialogWindow { get; set; }
-
     private void Modify(Employee employee)
     {
-        modalDialogWindow.Title = "Szerkesztés";
-        modalDialogWindow.FirstName = firstName;
-        modalDialogWindow.SurName = surName;
-        modalDialogWindow.Email = email;
-        modalDialogWindow.JobTitle = pos;
-        modalDialogWindow.Phone = phone;
-        modalDialogWindow.Supervisor = supervisor;
-        modalDialogWindow.Gender = gender;
-        modalDialogWindow.Type = ModalWindowType.Modify;
-        modalDialogWindow.Open(employee);
+        if (modalDialogWindow != null)
+        {
+            modalDialogWindow.Open(employee);
+        }
     }
 
-    //TODO: hibára áll ki, ha bármelyik sorban NULL érték van, kezelni kell!
     //TODO: kezeni az idegen kulcsok mitti törlés tiltását hozzá tartozó hibaüzenettel
 
     /*AccessCard x = new AccessCard();

@@ -71,7 +71,7 @@
                 <label for="passwordCheck">Jelszó megerőssítése:</label>
                 <input type="password" class="form-control" id="passwordCheck" name="passwordCheck" @bind="PasswordCheck">
             </div>
-            @if (Message == "A jelszavak nem egyeznek meg.")
+            @if (Message == "A jelszavak nem egyeznek meg." || Message == "Minden mezőt ki kell tölteni!")
             {
                 <div class="alert alert-danger" role="alert">
                     @Message
@@ -96,44 +96,42 @@
 @code {
 
     [Parameter]
-    public string SurName { get; set; }
+    public string? SurName { get; set; }
     [Parameter]
-    public string FirstName { get; set; }
+    public string? FirstName { get; set; }
     [Parameter]
-    public string Email { get; set; }
+    public string? Email { get; set; }
     [Parameter]
     public int JobTitle { get; set; }
     [Parameter]
-    public string Phone { get; set; }
+    public string? Phone { get; set; }
     [Parameter]
     public int Supervisor { get; set; }
     [Parameter]
     public bool Gender { get; set; }
     [Parameter]
-    public string Password { get; set; }
+    public string? Password { get; set; }
     [Parameter]
-    public string PasswordCheck { get; set; }
+    public string? PasswordCheck { get; set; }
 
-    private string Message { get; set; }
-    public string UserName { get; set; }
-    [Inject] private NavigationManager NavigationManager { get; set; }
+    [Inject] private NavigationManager? NavigationManager { get; set; }
 
     List<Employee> employees = new List<Employee>();
     List<JobTitle> jobTitle = new List<JobTitle>();
 
+    private string? Message { get; set; }
+    public string? UserName { get; set; }
+
     private int SelectedSupervisorId;
     public int SelectedJobTitleId;
 
-
     protected override void OnInitialized()
     {
-        if (signInCheck.CurrentEmployee == null)
+        if (signInCheck.CurrentEmployee == null || string.IsNullOrEmpty(signInCheck.CurrentEmployee.Username))
         {
-            // Redirect to home page on successful login
-
             navigationmanager.NavigateTo("/");
+            return;
         }
-
         base.OnInitialized();
 
         employees = _databaseHandler.GetAllEmployees();
@@ -150,10 +148,13 @@
                 Message = "A jelszavak nem egyeznek meg.";
                 return;
             }
+            if (string.IsNullOrEmpty(SurName) || string.IsNullOrEmpty(FirstName) || string.IsNullOrEmpty(Email) || string.IsNullOrEmpty(Phone) || SelectedJobTitleId == 0 || SelectedSupervisorId == 0)
+            {
+                Message = "Minden mezőt ki kell tölteni!";
+                return;
+            }
 
             Employee Employee = new Employee();
-            Login Login = new Login();
-
             Employee.SurName = SurName;
             Employee.FirstName = FirstName;
             Employee.Email = Email;
@@ -162,6 +163,13 @@
             Employee.Supervisor = SelectedSupervisorId;
             Employee.JobTitle = SelectedJobTitleId;
 
+            if (string.IsNullOrEmpty(Password))
+            {
+                Message = "Jelszó nem lehet üres!";
+                return;
+            }
+
+            Login Login = new Login();
             Login.Username = Email;
             Login.Password = _dbcontext.HashPassword(Password);
             Login.LastLogin = new DateTime(2022, 1, 1);
@@ -182,11 +190,10 @@
         Task.Delay(3000).ContinueWith(t =>
         {
             Message = string.Empty;
-            NavigationManager.NavigateTo("/");
+            if (NavigationManager != null)
+            {
+                NavigationManager.NavigateTo("/");
+            }
         });
-
-
     }
-
-
 }

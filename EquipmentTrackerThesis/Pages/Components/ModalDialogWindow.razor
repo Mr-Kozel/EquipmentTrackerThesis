@@ -75,25 +75,23 @@
 
 @code {
     [Parameter]
-    public string Title { get; set; }
+    public string? Title { get; set; } = "";
     [Parameter]
-    public string Body { get; set; }
+    public string? SurName { get; set; } = "";
     [Parameter]
-    public string SurName { get; set; }
+    public string? FirstName { get; set; } = "";
     [Parameter]
-    public string FirstName { get; set; }
+    public string? Email { get; set; } = "";
     [Parameter]
-    public string Email { get; set; }
+    public int JobTitle { get; set; } = 0;
     [Parameter]
-    public int JobTitle { get; set; }
+    public string? Phone { get; set; } = "";
     [Parameter]
-    public string Phone { get; set; }
+    public int Supervisor { get; set; } = 0;
     [Parameter]
-    public int Supervisor { get; set; }
+    public bool Gender { get; set; } = false;
     [Parameter]
-    public bool Gender { get; set; }
-    [Parameter]
-    public Employee Employee { get; set; }
+    public Employee? Employee { get; set; }
     private ModalWindowType _type;
     [Parameter]
     public ModalWindowType Type
@@ -115,22 +113,29 @@
     public Guid Guid = Guid.NewGuid();
     public string ModalDisplay = "none;";
     public string ModalClass = "";
+    private string? originalSurName;
+    private string? originalFirstName;
+    private string? originalEmail;
+    private string? originalPhone;
     public bool ShowBackdrop = false;
-    private string originalSurName;
-    private string originalFirstName;
-    private string originalEmail;
-    private string originalPhone;
     private bool originalGender;
     private int SelectedSupervisorId;
     public int SelectedJobTitleId;
-
 
     public void Open(Employee employee)
     {
         ModalDisplay = "block;";
         ModalClass = "Show";
         ShowBackdrop = true;
+        Type = ModalWindowType.Modify;
         StateHasChanged();
+
+        SurName = employee.SurName;
+        FirstName = employee.FirstName;
+        Email = employee.Email;
+        Phone = employee.Phone;
+        Gender = employee.Gender;
+        Supervisor = employee.Supervisor;
 
         employees = _databaseHandler.GetAllEmployees();
         jobTitle = _databaseHandler.GetAllJobTitles();
@@ -153,6 +158,7 @@
         ShowBackdrop = false;
         StateHasChanged();
     }
+
     public void Update()
     {
         bool isModified = SurName != originalSurName ||
@@ -176,12 +182,11 @@
             _databaseHandler.UpdateEmployee(Employee);
             Close();
         }
-
     }
 
     public void HandleJobTitleChange(ChangeEventArgs e)
     {
-        if (int.TryParse(e.Value.ToString(), out int selectedJobTitleId))
+        if (int.TryParse(e.Value?.ToString(), out int selectedJobTitleId))
         {
             SelectedJobTitleId = selectedJobTitleId;
         }
@@ -189,7 +194,6 @@
 
     private string ModalTypeToClass()
     {
-        //I added these classes to the CSS file, you can modify it further
         switch (Type)
         {
             case ModalWindowType.Modify:
@@ -205,8 +209,7 @@
 
     private string IconFromModalType()
     {
-        //These icons come from Open Iconic, which is part of bootstrap framework which is added automatically with Blazor
-        //You can find possibilites here: https://icon-sets.iconify.design/oi/
+        //Open Iconic: https://icon-sets.iconify.design/oi/
         switch (Type)
         {
             case ModalWindowType.Modify:

@@ -19,7 +19,6 @@
 
         <main>
             <div class="top-row px-4">
-                <!--<a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>-->
                 <div style="width:150px;text-align:right;">
                     @if (loggedIn)
                     {
@@ -41,7 +40,7 @@
 
 </CascadingValue>
 
-<div class="modal-backdrop fade @(show ? "show" : "") @(display ? "d-block" : "d-none")"></div>
+<div class="modal-backdrop fade @(show ? "show" : "") @(display ? "d-block" : "d-none")" style="z-index: -1;"></div>
 
 <div class="modal fade @(show ? "show" : "")  @(display ? "d-block" : "d-none")" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
@@ -78,7 +77,7 @@
 
     private bool show, display, loggedIn;
     private string? user, password;
-    private string errorMessage;
+    private string? errorMessage;
 
     public string? GetUserName()
     {
@@ -99,22 +98,27 @@
         user = null;
         loggedIn = false;
         await LocalStorage.RemoveAsync("user", JSRuntime);
+        signInCheck.CurrentEmployee = new EmployeeModel
+            {
+                Username = ""
+            };
         navigationmanager.NavigateTo("/");
     }
 
     private async Task Close()
     {
         show = false;
-        await Task.Delay(500);
         display = false;
+        errorMessage = null;
+        await Task.Delay(500);
+        StateHasChanged();
     }
 
-    private async Task Login()
+    private void Login()
     {
         if (!string.IsNullOrEmpty(user))
         {
             SignIn();
-            await Close();
         }
     }
 
@@ -122,9 +126,6 @@
     {
         if (firstRender)
         {
-            // Pass JSRuntime to GetStringAsync method call
-            //user = await LocalStorage.GetStringAsync("user", JSRuntime);
-            //loggedIn = !string.IsNullOrEmpty(user);
             if (!loggedIn)
             {
                 await LocalStorage.RemoveAsync("user", JSRuntime);
@@ -132,23 +133,35 @@
             StateHasChanged();
         }
     }
-    private void SignIn()
+    private async void SignIn()
     {
-        bool isAuthenticated = signInCheck.SignInAttempt(user, password);
-        if (isAuthenticated)
+        if (!string.IsNullOrEmpty(user) && !string.IsNullOrEmpty(password))
         {
-            var logins = _dbHandler.GetAllLogins();
-            var currentLogin = logins.First(x => x.Username == user);
-            currentLogin.LastLogin = DateTime.Now;
-            _dbHandler.UpdateLogin(currentLogin);
+        bool isAuthenticated = signInCheck.SignInAttempt(user, password);
+            if (isAuthenticated)
+            {
+                var logins = _dbHandler.GetAllLogins();
+                var currentLogin = logins.First(x => x.Username == user);
+                currentLogin.LastLogin = DateTime.Now;
+                _dbHandler.UpdateLogin(currentLogin);
 
-            loggedIn = true;
-            LocalStorage.SaveStringAsync("user", user, JSRuntime);
-            navigationmanager.NavigateTo("/account");
+                loggedIn = true;
+                await LocalStorage.SaveStringAsync("user", user, JSRuntime);
+                navigationmanager.NavigateTo("/account");
+                await Close();
+            }
+            else
+            {
+                errorMessage = "A felhasználónév és/vagy a jelszó helytelen!";
+                //user = null;
+                password = null;
+                StateHasChanged();
+            }
         }
         else
         {
             errorMessage = "A felhasználónév és/vagy a jelszó helytelen!";
+            StateHasChanged();
         }
     }
 }

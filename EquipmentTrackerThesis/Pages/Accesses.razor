@@ -1,4 +1,5 @@
 ﻿@page "/accesses"
+
 @using EquipmentTrackerThesis.Data;
 @using EquipmentTrackerThesis.Database;
 @using EquipmentTrackerThesis.Database.Models;
@@ -15,40 +16,40 @@
 <hr />
 <div>
     <div>
-        <img src="/css/Map.jpg" width="1024px" height="576px" />
+        <img src="/css/Map.jpg" width="1024" height="576" />
     </div>
     <div class="d-flex flex-row justify-content-around">
         <div class="d-flex flex-column">
             <br />
             <div class="d-inline-block">
                 Fő épület: 
-                <img src=@main width="12px" height="12px" />
+                <img src=@main width="12" height="12" />
             </div>
             <div>
                 Labor: 
-                <img src=@lab width="12px" height="12px" />
+                <img src=@lab width="12" height="12" />
             </div>
             <div>
                 Fejleztőközpont:
-                <img src=@rnd width="12px" height="12px" />
+                <img src=@rnd width="12" height="12" />
             </div>
             <div>
                 Gyártósor:
-                <img src=@prod width="12px" height="12px" />
+                <img src=@prod width="12" height="12" />
             </div>
             <div>
                 Raktár:
-                <img src=@ware width="12px" height="12px" />
+                <img src=@ware width="12" height="12" />
             </div>
             <div>
                 Veszélyes áru raktár:
-                <img src=@hware width="12px" height="12px" />
+                <img src=@hware width="12" height="12" />
             </div>
             <br />
         </div>
         <div>
             Külső telephely
-            <img src=@county width="12px" height="12px" />
+            <img src=@county width="12" height="12" />
         </div>
     </div>
 
@@ -58,19 +59,19 @@
 
 
 @code {
-    public string main;
-    public string lab;
-    public string county;
-    public string rnd;
-    public string prod;
-    public string ware;
-    public string hware;
+    public string? main;
+    public string? lab;
+    public string? county;
+    public string? rnd;
+    public string? prod;
+    public string? ware;
+    public string? hware;
     public int accessCardId;
-    public string firstName;
-    public string surName;
+    public string? firstName;
+    public string? surName;
     public int employee;
     private string selectedEmail = "";
-    public string UserName { get; set; }
+    public string? UserName { get; set; }
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -79,10 +80,14 @@
             var employees = _databaseHandler.GetAllEmployees();
             var employeeEmails = employees.Select(x => x.Email).ToList();
 
-            selectedEmail = signInCheck.CurrentEmployee?.Employee.Email;
+            selectedEmail = signInCheck.CurrentEmployee?.Employee.Email ?? "";
             if (string.IsNullOrEmpty(signInCheck.CurrentEmployee?.Employee.Email) == false)
             {
-                employee = employees.FirstOrDefault(x => x.Email == selectedEmail).Id;
+                var foundEmployee = employees.FirstOrDefault(x => x.Email == selectedEmail);
+                if (foundEmployee != null)
+                {
+                    employee = foundEmployee.Id;
+                }
             }
             StateHasChanged();
         }
@@ -90,10 +95,10 @@
 
     protected override void OnInitialized()
     {
-        if (signInCheck.CurrentEmployee == null)
+        if (signInCheck.CurrentEmployee == null || string.IsNullOrEmpty(signInCheck.CurrentEmployee.Username))
         {
-            // Redirect to home page on successful login
             navigationmanager.NavigateTo("/");
+            return;
         }
 
         base.OnInitialized();
@@ -102,7 +107,6 @@
         var employees = _databaseHandler.GetAllEmployees();
         var jobTitles = _databaseHandler.GetAllJobTitles();
 
-        //employee = 0;
         accessCardId = jobTitles[employees[employee].JobTitle-5000].AccessCardType-1000;
         
         surName = employees[employee].SurName;

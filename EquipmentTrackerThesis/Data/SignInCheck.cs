@@ -7,7 +7,7 @@ namespace EquipmentTrackerThesis.Data
     {
         private DatabaseContext _dbcontext;
         private DatabaseHandler _databaseHandler;
-        public EmployeeModel CurrentEmployee { get; set; }
+        public EmployeeModel? CurrentEmployee { get; set; }
         public SignInCheck(DatabaseContext dbcontext, DatabaseHandler databaseHandler)
         {
             _dbcontext = dbcontext;

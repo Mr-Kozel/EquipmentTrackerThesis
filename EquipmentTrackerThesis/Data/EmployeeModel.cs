@@ -4,7 +4,7 @@ namespace EquipmentTrackerThesis.Data
 {
     public class EmployeeModel
     {
-        public string Username { get; set; }
-        public Employee Employee { get; set; }
+        public string? Username { get; set; }
+        public Employee? Employee { get; set; }
     }
 }

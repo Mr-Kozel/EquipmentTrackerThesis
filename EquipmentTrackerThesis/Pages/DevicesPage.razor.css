@@ -1,0 +1,17 @@
+﻿.selectable-row {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.hover-row {
+    background-color: #bcbcbc; /* Light gray background*/
+}
+
+.selected-row {
+    background-color: #cce5ff; /* Light blue color */
+}
+.disabled {
+    background-color: lightgray;
+    cursor: not-allowed;
+}
+

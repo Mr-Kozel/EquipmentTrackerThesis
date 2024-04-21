@@ -1,5 +1,225 @@
-﻿<h3>ModalDialogWindowToRemoveDevice</h3>
+﻿@using EquipmentTrackerThesis.Data;
+@using EquipmentTrackerThesis.Database;
+@using EquipmentTrackerThesis.Database.Models;
+@using EquipmentTrackerThesis.Pages.Components;
+@inject DatabaseHandler _databaseHandler;
+@inject NavigationManager navigationmanager
+
+<div class="modal @(ModalClass)" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="background-color: #7398ff;">
+            <div class="d-flex @(ModalTypeToClass())">
+                <span class="oi oi-@(IconFromModalType())" style="margin-right:5px" aria-hidden="true"></span>
+                <h6 class="modal-title">@Title</h6>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex flex-column">
+                    <div class="form-group">
+                        <label for="name">Név:</label>
+                        <input type="text" class="form-control" id="name" name="name" @bind="@Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="snumber">Gyártási szám:</label>
+                        <input type="text" class="form-control" id="snumber" name="snumber" @bind="@SerialNumber">
+                    </div>
+                    <div class="form-group">
+                        <label for="type">Típus:</label>
+                        <select class="form-control" id="type" name="type" @bind="@Type_">
+                            @foreach (var type in types)
+                            {
+                                <option value="@type">@type</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="pdate">Vásárlás dátuma:</label>
+                        <DatePicker Name="@("Dátum választása")" @bind-Value="@PurchaseDate"></DatePicker>
+                    </div>
+                    <div class="form-group">
+                        <label for="owner">Tulajdonos:</label>
+                        <select class="form-control" id="owner" name="owner" @bind="@Owner">
+                            @foreach (var emp in employees)
+                            {
+                                <option value="@emp.Id">@emp.SurName @emp.FirstName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="recdate">Átvétel dátuma:</label>
+                        <DatePicker Name="@("Dátum választása")" @bind-Value="@ReceptionDate"></DatePicker>
+                    </div>
+                    <div class="form-group">
+                        <label for="recdate">Leadás dátuma:</label>
+                        <DatePicker Name="@("Dátum választása")" @bind-Value="@ReturnDate"></DatePicker>
+                    </div>
+                    <div class="form-group">
+                        <label for="recdate">Archiválás:</label>
+                        <input type="checkbox" class="" id="archive" name="archive" @bind="@Archived">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer d-inline-block">
+                <button type="button" class="btn spa-btn-secondary" data-dismiss="modal" @onclick="() => Update()">Módosítás</button>
+                <button type="button" class="btn spa-btn-secondary" data-dismiss="modal" @onclick="() => Close()">Mégse</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
+    [Parameter]
+    public string? Title { get; set; }
+    [Parameter]
+    public string? Body { get; set; }
+    [Parameter]
+    public int Assignment { get; set; }
+    [Parameter]
+    public string? SerialNumber { get; set; }
+    [Parameter]
+    public string? Name { get; set; }
+    [Parameter]
+    public string? Type_ { get; set; }
+    [Parameter]
+    public DateTime PurchaseDate { get; set; }
+    [Parameter]
+    public int Owner { get; set; }
+    [Parameter]
+    public DateTime ReceptionDate { get; set; }
+    [Parameter]
+    public DateTime ReturnDate { get; set; }
+    [Parameter]
+    public bool Archived { get; set; }
+    [Parameter]
+    public Devices? Device { get; set; }
+    private ModalWindowType _type;
+    [Parameter]
+    public ModalWindowType Type
+    {
+        get
+        {
+            return _type;
+        }
+        set
 
+        {
+            _type = value;
+        }
+    }
+
+    List<string> types = new List<string>();
+    List<Employee> employees = new List<Employee>();
+
+    public Guid Guid = Guid.NewGuid();
+    public string ModalDisplay = "none;";
+    public string ModalClass = "";
+    public string Message = "";
+    private string? originalName;
+    private string? originalSerialNumber;
+    private string? originalType;
+    private int originalOwner;
+    private DateTime originalPurchaseDate;
+    private DateTime originalReceptionDate;
+    private DateTime originalReturndateDate;
+    private bool originalArchivedStatus;
+    public bool ShowBackdrop = false;
+
+    public void Open(Devices device)
+    {
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+
+        Name = device.Name;
+        SerialNumber = device.SerialNumber;
+        Type_ = device.Type;
+        Owner = device.Owner + 1;
+        PurchaseDate = device.PurchaseDate;
+        ReceptionDate = device.ReceptionDate;
+        ReturnDate = device.ReturnDate;
+        Archived = device.Archived;
+        Type = ModalWindowType.Modify;
+
+        employees = _databaseHandler.GetAllEmployees();
+        types = ["Mobil", "Laptop", "Tablet", "Jármű"];
+
+        originalName = Name;
+        originalSerialNumber = SerialNumber;
+        originalType = Type_;
+        originalOwner = Owner + 1;
+        originalPurchaseDate = PurchaseDate;
+        originalReceptionDate = ReceptionDate;
+        originalReturndateDate = ReturnDate;
+        originalArchivedStatus = Archived;
+
+        Device = device;
+    }
+
+    public void Update()
+    {
+        bool isModified = Name != originalName ||
+                         SerialNumber != originalSerialNumber ||
+                         Type_ != originalType ||
+                         Owner != originalOwner ||
+                         PurchaseDate != originalPurchaseDate ||
+                         ReceptionDate != originalReceptionDate ||
+                         ReturnDate != originalReturndateDate ||
+                         Archived != originalArchivedStatus;
+
+        if (isModified)
+        {
+            Device.Name = Name;
+            Device.SerialNumber = SerialNumber;
+            Device.Type = Type_;
+            Device.Owner = Owner;
+            Device.PurchaseDate = PurchaseDate;
+            Device.ReceptionDate = ReceptionDate;
+            Device.ReturnDate = ReturnDate;
+            Device.Archived = Archived;
+
+            _databaseHandler.UpdateDevice(Device);
+            Close();
+        }
+    }
+
+    public void Close()
+    {
+        ModalDisplay = "none";
+        ModalClass = "";
+        ShowBackdrop = false;
+        StateHasChanged();
+    }
+
+    private string ModalTypeToClass()
+    {
+        //I added these classes to the CSS file, you can modify it further
+        switch (Type)
+        {
+            case ModalWindowType.Modify:
+                return "msg-loop-circular";
+            case ModalWindowType.Warning:
+                return "msg-warning";
+            case ModalWindowType.Error:
+                return "msg-error";
+            default:
+                return "msg-info";
+        }
+    }
+
+    private string IconFromModalType()
+    {
+        //These icons come from Open Iconic, which is part of bootstrap framework which is added automatically with Blazor
+        //You can find possibilites here: https://icon-sets.iconify.design/oi/
+        switch (Type)
+        {
+            case ModalWindowType.Modify:
+                return "loop-circular";
+            case ModalWindowType.Warning:
+                return "warning";
+            case ModalWindowType.Error:
+                return "circle-x";
+            default:
+                return "info";
+        }
+    }
 }

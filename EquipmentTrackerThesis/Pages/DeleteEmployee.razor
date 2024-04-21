@@ -43,45 +43,38 @@
 </div>
 
 
-
-
 @code {
+    [Parameter]
+    public string? SurName { get; set; }
+    [Parameter]
+    public string? FirstName { get; set; }
+    [Parameter]
+    public string? Email { get; set; }
 
-    [Parameter]
-    public string SurName { get; set; }
-    [Parameter]
-    public string FirstName { get; set; }
-    [Parameter]
-    public string Email { get; set; }
-
-    public string UserName { get; set; }
-    private string Message { get; set; }
-    [Inject] private NavigationManager NavigationManager { get; set; }
+    [Inject] private NavigationManager? NavigationManager { get; set; }
 
     List<Employee> employees = new List<Employee>();
 
-    private string SelectedEmail;
-    private Employee SelectedEmployee;
-
+    public string? UserName { get; set; }
+    private string? Message { get; set; }
+    private string? SelectedEmail;
+    private Employee? SelectedEmployee;
 
     protected override void OnInitialized()
     {
-        if (signInCheck.CurrentEmployee == null)
+        if (signInCheck.CurrentEmployee == null || string.IsNullOrEmpty(signInCheck.CurrentEmployee.Username))
         {
-            // Redirect to home page on successful login
-
             navigationmanager.NavigateTo("/");
+            return;
         }
-
         base.OnInitialized();
 
         employees = _databaseHandler.GetAllEmployees();
-
     }
 
     private void UpdateSelectedEmployee(ChangeEventArgs e)
     {
-        SelectedEmail = e.Value.ToString();
+        SelectedEmail = e.Value?.ToString();
         if (!string.IsNullOrEmpty(SelectedEmail))
         {
             SelectedEmployee = employees.FirstOrDefault(emp => emp.Id == int.Parse(SelectedEmail));
@@ -92,10 +85,8 @@
     {
         try
         {
-
             _databaseHandler.DeleteEmployee(employees[selectedEmployeeId]);
             Message = "A munkavállaló kiléptetése sikeres.";
-
         }
         catch (Exception ex)
         {
@@ -105,7 +96,10 @@
         Task.Delay(3000).ContinueWith(t =>
         {
             Message = string.Empty;
-            NavigationManager.NavigateTo("/");
+            if (NavigationManager != null)
+            {
+                NavigationManager.NavigateTo("/");
+            }
         });
     }
 }
