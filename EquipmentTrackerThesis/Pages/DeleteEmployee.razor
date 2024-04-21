@@ -3,14 +3,24 @@
 @using EquipmentTrackerThesis.Data;
 @using EquipmentTrackerThesis.Database;
 @using EquipmentTrackerThesis.Database.Models;
-@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components;
+@using EquipmentTrackerThesis.Pages.Components;
 @inject DatabaseHandler _databaseHandler;
 @inject DatabaseContext _dbcontext;
 @inject SignInCheck signInCheck
 @inject NavigationManager navigationmanager
 
+<style>
+    body {
+        background-color: #ff837d;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+    }
+</style>
+
 <h3>Munkavállaló kiléptetése</h3>
-<div class="AddEmployee" role="document" style="background-color: #ff837d;">
+<div class="AddEmployee" role="document">
     <div class="">
         <div class="page-body">
             <div class="d-flex flex-column">
@@ -34,13 +44,16 @@
         @if (SelectedEmployee != null)
         {
             <div>
-                <p>First Name: @SelectedEmployee.FirstName</p>
-                <p>Last Name: @SelectedEmployee.SurName</p>
-                <button class="btn btn-danger" @onclick="() => RemoveEmployee(SelectedEmployee.Id)">Kiléptetés</button>
+                <br />
+                <p>Vezetéknév: @SelectedEmployee.SurName</p>
+                <p>Keresztnév: @SelectedEmployee.FirstName</p>
+                <button class="btn btn-danger" @onclick="() => TryRemoveEmployee()">Kiléptetés</button>
             </div>
         }
     </div>
 </div>
+
+<ModalConfirmWindow @ref="modalConfirmWindow" OnAccepted="@(async () => RemoveEmployee(SelectedEmployee.Id))"></ModalConfirmWindow>
 
 
 @code {
@@ -52,6 +65,8 @@
     public string? Email { get; set; }
 
     [Inject] private NavigationManager? NavigationManager { get; set; }
+    private ModalConfirmWindow? modalConfirmWindow { get; set; }
+
 
     List<Employee> employees = new List<Employee>();
 
@@ -85,7 +100,7 @@
     {
         try
         {
-            _databaseHandler.DeleteEmployee(employees[selectedEmployeeId]);
+            _databaseHandler.DeleteEmployee(employees[selectedEmployeeId + 2]);
             Message = "A munkavállaló kiléptetése sikeres.";
         }
         catch (Exception ex)
@@ -101,6 +116,17 @@
                 NavigationManager.NavigateTo("/");
             }
         });
+    }
+
+    private void TryRemoveEmployee()
+    {
+        if(SelectedEmployee != null && modalConfirmWindow != null)
+        {
+        modalConfirmWindow.Title = $"Dolgozó kiléptetése: {SelectedEmployee.SurName} {SelectedEmployee.FirstName}";
+        modalConfirmWindow.Body = "Biztos, hogy ki akarod léptetni?";
+        modalConfirmWindow.AcceptMessage = "Igen";
+        modalConfirmWindow.Open();
+        }
     }
 }
 

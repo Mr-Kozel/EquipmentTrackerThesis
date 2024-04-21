@@ -1,4 +1,7 @@
-﻿
+﻿@using EquipmentTrackerThesis.Data;
+@inject SignInCheck signInCheck
+
+
 <div class="top-row ps-3 navbar" style="background-color: #052767">
     <div class="container-fluid justify-content-center">
         <img src="/css/Example-Company-Logo.png" style="width: 120px" />
@@ -31,16 +34,19 @@
                 <span class="oi oi-laptop" aria-hidden="true"></span> Céges eszközök
             </NavLink>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="addEmployee">
-                <span class="oi oi-people" aria-hidden="true"></span> Beléptetés
-            </NavLink>
-        </div>
+        @if (signInCheck.GetRole() == "Admin")
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="addEmployee">
+                    <span class="oi oi-people" aria-hidden="true"></span> Beléptetés
+                </NavLink>
+            </div>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="removeEmployee">
                 <span class="oi oi-delete" aria-hidden="true"></span> Kiléptetés
             </NavLink>
         </div>
+        }
     </nav>
 </div>
 

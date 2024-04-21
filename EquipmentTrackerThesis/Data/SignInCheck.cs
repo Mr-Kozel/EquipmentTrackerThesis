@@ -7,13 +7,14 @@ namespace EquipmentTrackerThesis.Data
     {
         private DatabaseContext _dbcontext;
         private DatabaseHandler _databaseHandler;
+        private RoleService roleService;
         public EmployeeModel? CurrentEmployee { get; set; }
         public SignInCheck(DatabaseContext dbcontext, DatabaseHandler databaseHandler)
         {
             _dbcontext = dbcontext;
             _databaseHandler = databaseHandler;
         }
-
+        
         public bool SignInAttempt(string username, string password)
         {
             string hashedpass = _dbcontext.HashPassword(password);
@@ -26,6 +27,11 @@ namespace EquipmentTrackerThesis.Data
             {
                 return true;
             }
+        }
+        public string GetRole()
+        {
+            roleService = new RoleService(_databaseHandler);
+            return roleService.GetRole(CurrentEmployee?.Username ?? "");
         }
     }
 }

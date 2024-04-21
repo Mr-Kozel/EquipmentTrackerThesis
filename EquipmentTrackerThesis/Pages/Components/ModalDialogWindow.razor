@@ -6,8 +6,8 @@
 <div class="modal @(ModalClass)" tabindex="-1" role="dialog" style="display:@ModalDisplay">
     <div class="modal-dialog" role="document">
         <div class="modal-content" style="background-color: #9effa9;">
-            <div class="d-flex @(ModalTypeToClass())">
-                <span class="oi oi-@(IconFromModalType())" style="margin-right:5px" aria-hidden="true"></span>
+            <div class="d-flex justify-content-center align-items-center @(ModalTypeToClass())">
+                <span class="oi oi-@(IconFromModalType())" style="margin-right:10px" aria-hidden="true"> Szerkesztés</span>
                 <h6 class="modal-title">@Title</h6>
             </div>
             <div class="modal-body">
@@ -42,10 +42,18 @@
                         <select class="form-control" id="supervisor" name="supervisor" @bind="@SelectedSupervisorId">
                             @foreach (var emp in employees)
                             {
-                                <option value="@emp.Id">@emp.SurName @emp.FirstName</option>
+                                if (emp.IsActive)
+                                {
+                                    <option value="@emp.Id">@emp.SurName @emp.FirstName</option>
+                                }
+                                else
+                                {
+                                    continue;
+                                }
                             }
                         </select>
                     </div>
+                    <br />
                     <div class="form-group">
                         <label>Nem:</label>
                         <div class="form-check">
@@ -169,7 +177,7 @@
                          SelectedSupervisorId != Supervisor ||
                          Gender != originalGender;
 
-        if (isModified)
+        if (isModified && Employee != null)
         {
             Employee.SurName = SurName;
             Employee.FirstName = FirstName;

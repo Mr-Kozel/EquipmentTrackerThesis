@@ -102,6 +102,7 @@ namespace EquipmentTrackerThesis.Database
         public List<Employee> GetAllEmployees()
         {
             return _dbcontext.Employee.ToList();
+            //return _dbcontext.Employee.Where(x => x.IsActive == true).ToList();
         }
         /// <summary>
         /// This method adds a row to Employee table.

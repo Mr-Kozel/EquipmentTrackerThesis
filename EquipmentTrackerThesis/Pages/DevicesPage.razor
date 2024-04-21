@@ -14,20 +14,23 @@
 <div class="search-container">
     <input type="text" value="@searchTerm" @oninput="HandleInput" placeholder="Keresés...">
     <button class="btn btn-primary" @onclick="FilterDevices">Keresés</button>
-    <button class="btn btn-primary" @onclick="AddNewDevice">Új eszköz hozzáadása</button>
-    @if (existSelectedDivice)
+    @if (signInCheck.GetRole() == "Admin")
     {
-        <button class="btn btn-primary" @onclick="ModifyDevice">Eszköz módosítása/eltávolítása</button>
-    }
-    else
-    {
-        <button class="btn btn-primary disabled">Eszköz módosítása/eltávolítása</button>
+        <button class="btn btn-primary" @onclick="AddNewDevice">Új eszköz hozzáadása</button>
+        @if (existSelectedDivice)
+        {
+            <button class="btn btn-primary" @onclick="ModifyDevice">Eszköz módosítása/archiválása</button>
+        }
+        else
+        {
+            <button class="btn btn-primary disabled">Eszköz módosítása/archiválása</button>
+        }
     }
 
 </div>
 
 <ModalDialogWindowToAdd @ref="modalDialogWindowToAdd"></ModalDialogWindowToAdd>
-<ModalDialogWindowToRemoveDevice @ref="modalDialogWindowToRemove"></ModalDialogWindowToRemoveDevice>
+<ModalDialogWindowToModifyRemove @ref="modalDialogWindowToModifyRemove"></ModalDialogWindowToModifyRemove>
 
 @if (devices == null)
 {
@@ -87,7 +90,7 @@ else
     List<Devices> filteredDevices = new List<Devices>();
 
     private ModalDialogWindowToAdd? modalDialogWindowToAdd { get; set; }
-    private ModalDialogWindowToRemoveDevice? modalDialogWindowToRemove { get; set; }
+    private ModalDialogWindowToModifyRemove? modalDialogWindowToModifyRemove { get; set; }
     private Devices selectedDevice = new Devices();
     private Devices? hoveredDevice;
 
@@ -139,9 +142,9 @@ else
 
     public void ModifyDevice()
     {
-        if (selectedDevice != null && modalDialogWindowToRemove != null)
+        if (selectedDevice != null && modalDialogWindowToModifyRemove != null)
         {
-            modalDialogWindowToRemove.Open(selectedDevice);
+            modalDialogWindowToModifyRemove.Open(selectedDevice);
         }
     }
 

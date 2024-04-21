@@ -3,13 +3,12 @@
 @using EquipmentTrackerThesis.Database.Models;
 @using EquipmentTrackerThesis.Pages.Components;
 @inject DatabaseHandler _databaseHandler;
-@inject NavigationManager navigationmanager
 
 <div class="modal @(ModalClass)" tabindex="-1" role="dialog" style="display:@ModalDisplay">
     <div class="modal-dialog" role="document">
         <div class="modal-content" style="background-color: #7398ff;">
-            <div class="d-flex @(ModalTypeToClass())">
-                <span class="oi oi-@(IconFromModalType())" style="margin-right:5px" aria-hidden="true"></span>
+            <div class="d-flex justify-content-center align-items-center @(ModalTypeToClass())">
+                <span class="oi oi-@(IconFromModalType())" style="margin-right:10px" aria-hidden="true"> Eszköz módosítása/archiválása</span>
                 <h6 class="modal-title">@Title</h6>
             </div>
             <div class="modal-body">
@@ -40,7 +39,14 @@
                         <select class="form-control" id="owner" name="owner" @bind="@Owner">
                             @foreach (var emp in employees)
                             {
-                                <option value="@emp.Id">@emp.SurName @emp.FirstName</option>
+                                if (emp.IsActive)
+                                {
+                                    <option value="@emp.Id">@emp.SurName @emp.FirstName</option>
+                                }
+                                else
+                                {
+                                    continue;
+                                }
                             }
                         </select>
                     </div>
@@ -52,6 +58,7 @@
                         <label for="recdate">Leadás dátuma:</label>
                         <DatePicker Name="@("Dátum választása")" @bind-Value="@ReturnDate"></DatePicker>
                     </div>
+                    <br />
                     <div class="form-group">
                         <label for="recdate">Archiválás:</label>
                         <input type="checkbox" class="" id="archive" name="archive" @bind="@Archived">
@@ -59,12 +66,24 @@
                 </div>
             </div>
             <div class="modal-footer d-inline-block">
-                <button type="button" class="btn spa-btn-secondary" data-dismiss="modal" @onclick="() => Update()">Módosítás</button>
+                <button type="button" class="btn spa-btn-secondary" data-dismiss="modal" @onclick="() => TryUpdate()">Módosítás</button>
                 <button type="button" class="btn spa-btn-secondary" data-dismiss="modal" @onclick="() => Close()">Mégse</button>
             </div>
+            @if (message == "Hiba: Az eszköz adataiban nem történt változás!")
+            {
+                <span class="alert alert-danger" role="alert">@message</span>
+            }
         </div>
     </div>
 </div>
+
+<ModalConfirmWindow @ref="modalConfirmWindow" OnAccepted="@(async () => Update())"></ModalConfirmWindow>
+
+
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
 
 @code {
     [Parameter]
@@ -105,6 +124,7 @@
             _type = value;
         }
     }
+    private ModalConfirmWindow? modalConfirmWindow { get; set; }
 
     List<string> types = new List<string>();
     List<Employee> employees = new List<Employee>();
@@ -112,7 +132,7 @@
     public Guid Guid = Guid.NewGuid();
     public string ModalDisplay = "none;";
     public string ModalClass = "";
-    public string Message = "";
+    public string message = "";
     private string? originalName;
     private string? originalSerialNumber;
     private string? originalType;
@@ -128,12 +148,13 @@
         ModalDisplay = "block;";
         ModalClass = "Show";
         ShowBackdrop = true;
+        message = "";
         StateHasChanged();
 
         Name = device.Name;
         SerialNumber = device.SerialNumber;
         Type_ = device.Type;
-        Owner = device.Owner + 1;
+        Owner = device.Owner;
         PurchaseDate = device.PurchaseDate;
         ReceptionDate = device.ReceptionDate;
         ReturnDate = device.ReturnDate;
@@ -146,7 +167,7 @@
         originalName = Name;
         originalSerialNumber = SerialNumber;
         originalType = Type_;
-        originalOwner = Owner + 1;
+        originalOwner = Owner;
         originalPurchaseDate = PurchaseDate;
         originalReceptionDate = ReceptionDate;
         originalReturndateDate = ReturnDate;
@@ -166,7 +187,7 @@
                          ReturnDate != originalReturndateDate ||
                          Archived != originalArchivedStatus;
 
-        if (isModified)
+        if (isModified && Device != null)
         {
             Device.Name = Name;
             Device.SerialNumber = SerialNumber;
@@ -180,6 +201,10 @@
             _databaseHandler.UpdateDevice(Device);
             Close();
         }
+        else
+        {
+            message = "Hiba: Az eszköz adataiban nem történt változás!";
+        }
     }
 
     public void Close()
@@ -187,7 +212,23 @@
         ModalDisplay = "none";
         ModalClass = "";
         ShowBackdrop = false;
+        message = "";
         StateHasChanged();
+    }
+
+    private void TryUpdate()
+    {
+        if (Device != null && Archived != originalArchivedStatus)
+        {
+            modalConfirmWindow.Title = $"Adá-vétel archiválása: {Device.Name}";
+            modalConfirmWindow.Body = "Biztos, hogy archiválja a kiválasztott sort?";
+            modalConfirmWindow.AcceptMessage = "Igen";
+            modalConfirmWindow.Open();
+        }
+        else
+        {
+            Update();
+        }
     }
 
     private string ModalTypeToClass()

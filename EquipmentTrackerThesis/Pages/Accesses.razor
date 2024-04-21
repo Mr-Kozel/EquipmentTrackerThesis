@@ -71,25 +71,16 @@
     public string? surName;
     public int employee;
     private string selectedEmail = "";
-    public string? UserName { get; set; }
+    //public string? UserName { get; set; }
 
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
         {
-            var employees = _databaseHandler.GetAllEmployees();
-            var employeeEmails = employees.Select(x => x.Email).ToList();
+            
 
-            selectedEmail = signInCheck.CurrentEmployee?.Employee.Email ?? "";
-            if (string.IsNullOrEmpty(signInCheck.CurrentEmployee?.Employee.Email) == false)
-            {
-                var foundEmployee = employees.FirstOrDefault(x => x.Email == selectedEmail);
-                if (foundEmployee != null)
-                {
-                    employee = foundEmployee.Id;
-                }
-            }
-            StateHasChanged();
+            
+            
         }
     }
 
@@ -103,9 +94,20 @@
 
         base.OnInitialized();
 
-        var accessCards = _databaseHandler.GetAllAccessCards();
+        selectedEmail = signInCheck.CurrentEmployee?.Employee?.Email ?? "";
         var employees = _databaseHandler.GetAllEmployees();
+        var employeeEmails = employees.Select(x => x.Email).ToList();
+        if (string.IsNullOrEmpty(signInCheck.CurrentEmployee?.Employee?.Email) == false)
+        {
+            var foundEmployee = employees.FirstOrDefault(x => x.Email == selectedEmail);
+            if (foundEmployee != null)
+            {
+                employee = foundEmployee.Id;
+            }
+        }
+
         var jobTitles = _databaseHandler.GetAllJobTitles();
+        var accessCards = _databaseHandler.GetAllAccessCards();
 
         accessCardId = jobTitles[employees[employee].JobTitle-5000].AccessCardType-1000;
         

@@ -20,11 +20,11 @@ namespace EquipmentTrackerThesis.Database
 
         public DatabaseContext()
         {
-            
+
         }
         public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
         {
-            
+
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -68,13 +68,20 @@ namespace EquipmentTrackerThesis.Database
             }
             else
             {
-                var employee = Employee?.FirstOrDefault(employee => employee.Id == currentEmployee.Id-1);
                 var employees = dbHandler.GetAllEmployees();
-                return new EmployeeModel
+                var employee = Employee?.FirstOrDefault(employee => employee.Id == currentEmployee.Id - 1);
+                if (employee != null && employee.IsActive == false)
                 {
-                    Employee = employees[(currentEmployee.Id - 1)],
-                    Username = username
-                };
+                    return null;
+                }
+                else
+                {
+                    return new EmployeeModel
+                    {
+                        Employee = employees[(currentEmployee.Id - 1)],
+                        Username = username
+                    };
+                }
             }
         }
 

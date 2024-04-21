@@ -1,0 +1,62 @@
+﻿
+<div class="modal @(ModalClass)" tabindex="-1" role="dialog" style="display:@(ModalDisplay)">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header spa-modal-header">
+                <h5 class="spa-modal-title">@(Title)</h5>
+            </div>
+            <div class="modal-body">
+                <p>@Body</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn spa-btn-active" @onclick="@(Accepted)">@AcceptMessage</button>
+                <button type="button" class="btn spa-btn-secondary" data-dismiss="modal" @onclick="() => Close()">Nem</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+
+@code {
+    [Parameter]
+    public string Title { get; set; }
+    [Parameter]
+    public string Body { get; set; }
+    [Parameter]
+    public string AcceptMessage { get; set; }
+    [Parameter]
+    public EventCallback OnAccepted { get; set; }
+
+    public Guid Guid = Guid.NewGuid();
+    public string ModalDisplay = "none;";
+    public string ModalClass = "";
+    public bool ShowBackdrop = false;
+
+    public void Open()
+    {
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        ModalDisplay = "none";
+        ModalClass = "";
+        ShowBackdrop = false;
+        StateHasChanged();
+    }
+
+    private async void Accepted()
+    {
+        await OnAccepted.InvokeAsync();
+        Close();
+    }
+}

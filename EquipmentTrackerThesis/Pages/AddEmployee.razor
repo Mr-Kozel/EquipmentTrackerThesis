@@ -9,8 +9,17 @@
 @inject SignInCheck signInCheck
 @inject NavigationManager navigationmanager
 
-<h3 style="background-color: #9effa9">Új munkavállaló hozzáadása</h3>
-<div class="page" style="background-color: #9effa9">
+<style>
+    body {
+        background-color: #9effa9;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+    }
+</style>
+
+<h3>Új munkavállaló hozzáadása</h3>
+<div class="page">
     <div class="AddEmployee" role="document">
         <div class="">
             <div class="page-body">
@@ -45,7 +54,14 @@
                         <select class="form-control" id="supervisor" name="supervisor" @bind="@SelectedSupervisorId">
                             @foreach (var emp in employees)
                             {
-                                <option value="@emp.Id">@emp.SurName @emp.FirstName</option>
+                                if(emp.IsActive)
+                                {
+                                    <option value="@emp.Id">@emp.SurName @emp.FirstName</option>
+                                }
+                                else
+                                {
+                                    continue;
+                                }
                             }
                         </select>
                     </div>
@@ -127,7 +143,7 @@
 
     protected override void OnInitialized()
     {
-        if (signInCheck.CurrentEmployee == null || string.IsNullOrEmpty(signInCheck.CurrentEmployee.Username))
+        if (signInCheck.CurrentEmployee == null || string.IsNullOrEmpty(signInCheck.CurrentEmployee.Username) || signInCheck.GetRole() == "Employee")
         {
             navigationmanager.NavigateTo("/");
             return;

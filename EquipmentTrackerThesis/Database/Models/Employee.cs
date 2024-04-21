@@ -13,6 +13,6 @@ namespace EquipmentTrackerThesis.Database.Models
         public string? Phone { get; set; }
         public int Supervisor { get; set; }
         public bool Gender { get; set; }
-
+        public bool IsActive { get; set; }
     }
 }

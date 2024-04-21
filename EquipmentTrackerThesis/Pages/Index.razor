@@ -33,10 +33,12 @@
         @(description)
     </div>
 </div>
-<div>
-    <button class="btn btn-primary" style="white-space:nowrap" @onclick="@(()=>Modify(employee))">Szerkesztés</button>
-</div>
-
+@if (signInCheck.GetRole() == "Admin")
+{
+    <div>
+        <button class="btn btn-primary" style="white-space:nowrap" @onclick="@(()=>Modify(employee))">Szerkesztés</button>
+    </div>
+}
 <ModalDialogWindow @ref="modalDialogWindow"></ModalDialogWindow>
 
 @code {
@@ -61,18 +63,18 @@
         }
         base.OnInitialized();
 
-        selectedEmail = signInCheck.CurrentEmployee?.Employee.Email ?? "";
+        selectedEmail = signInCheck.CurrentEmployee?.Employee?.Email ?? "";
         employees = _databaseHandler.GetAllEmployees();
         jobTitle = _databaseHandler.GetAllJobTitles();
                 
         var employeeEmails = employees.Select(x => x.Email).ToList();
 
-        if (string.IsNullOrEmpty(signInCheck.CurrentEmployee?.Employee.Email) == false)
+        if (string.IsNullOrEmpty(signInCheck.CurrentEmployee?.Employee?.Email) == false)
         {
             var foundEmployee = employees.FirstOrDefault(x => x.Email == selectedEmail);
             if (foundEmployee != null)
             {
-                z = foundEmployee.Id-1;
+                z = foundEmployee.Id;
             };
         }
 
@@ -93,8 +95,8 @@
         pos = x.JobTitle - 5001;
         email = x.Email;
         phone = x.Phone;
-        boss1 = employees[x.Supervisor - 1].SurName;
-        boss2 = employees[x.Supervisor - 1].FirstName;
+        boss1 = employees[x.Supervisor].SurName;
+        boss2 = employees[x.Supervisor].FirstName;
         description = jobTitle[x.JobTitle - 5001].Responsibilities;
         firstName = x.FirstName;
         surName = x.SurName;
