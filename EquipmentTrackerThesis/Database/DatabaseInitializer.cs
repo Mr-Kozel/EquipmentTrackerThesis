@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using System.Text;
 
 namespace EquipmentTrackerThesis.Database
 {
@@ -64,13 +65,19 @@ namespace EquipmentTrackerThesis.Database
             string scriptFilePath = Path.Combine(currentDirectory, scriptFileName);
             Console.WriteLine($"Executing script from: {scriptFilePath}"); // Debug statement
 
-                if (!File.Exists(scriptFilePath))
-                {
-                    Console.WriteLine($"Error: Script file not found at {scriptFilePath}");
-                    return;
-                }
+            if (!File.Exists(scriptFilePath))
+            {
+                Console.WriteLine($"Error: Script file not found at {scriptFilePath}");
+                return;
+            }
 
-            string script = File.ReadAllText(scriptFilePath);
+            string script;
+            using (StreamReader reader = new StreamReader(scriptFilePath, Encoding.GetEncoding(1250)))
+            {
+                script = reader.ReadToEnd();
+            }
+
+            string[] statements = script.Split(new[] { "GO" }, StringSplitOptions.RemoveEmptyEntries);
 
             SqlCommand cmd = new SqlCommand(script, connection);
             cmd.ExecuteNonQuery();
