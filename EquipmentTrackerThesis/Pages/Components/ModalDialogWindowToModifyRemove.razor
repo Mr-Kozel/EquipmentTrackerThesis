@@ -162,7 +162,7 @@
         Type = ModalWindowType.Modify;
 
         employees = _databaseHandler.GetAllEmployees();
-        types = ["Mobil", "Laptop", "Tablet", "Jármű"];
+        types = new List<string> { "Mobil", "Laptop", "Tablet", "Jármű" };
 
         originalName = Name;
         originalSerialNumber = SerialNumber;

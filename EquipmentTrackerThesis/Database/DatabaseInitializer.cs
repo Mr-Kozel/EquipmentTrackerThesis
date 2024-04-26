@@ -71,9 +71,15 @@ namespace EquipmentTrackerThesis.Database
                 }
 
             string script = File.ReadAllText(scriptFilePath);
+            string[] statements = script.Split(new[] { "GO" }, StringSplitOptions.RemoveEmptyEntries);
 
-            SqlCommand cmd = new SqlCommand(script, connection);
-            cmd.ExecuteNonQuery();
+            foreach (string statement in statements)
+            {
+                using (SqlCommand command = new SqlCommand(statement, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
         }
     }
 }
