@@ -1,4 +1,5 @@
 ﻿using EquipmentTrackerThesis.Database;
+using System.Data;
 
 
 namespace EquipmentTrackerThesis.Data
@@ -9,6 +10,7 @@ namespace EquipmentTrackerThesis.Data
         private DatabaseHandler _databaseHandler;
         private RoleService roleService;
         public EmployeeModel? CurrentEmployee { get; set; }
+
         public SignInCheck(DatabaseContext dbcontext, DatabaseHandler databaseHandler)
         {
             _dbcontext = dbcontext;

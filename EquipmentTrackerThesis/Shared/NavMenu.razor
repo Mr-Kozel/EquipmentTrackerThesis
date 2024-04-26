@@ -1,5 +1,6 @@
 ﻿@using EquipmentTrackerThesis.Data;
 @inject SignInCheck signInCheck
+@inject NavigationManager navigationManager
 
 
 <div class="top-row ps-3 navbar" style="background-color: #052767">
@@ -54,9 +55,15 @@
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private string? currentRole;
 
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    protected override void OnInitialized()
+    {
+        currentRole = signInCheck.GetRole();
     }
 }

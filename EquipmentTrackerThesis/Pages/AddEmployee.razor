@@ -28,14 +28,32 @@
                         <label for="fname">Vezetéknév:</label>
                         <input type="text" class="form-control" id="fname" name="fname" @bind="FirstName">
                     </div>
+                    @if (Message == "A vezetéknév mező kitöltése kötelező!")
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @Message
+                        </div>
+                    }
                     <div class="form-group">
                         <label for="sname">Keresztnév:</label>
                         <input type="text" class="form-control" id="sname" name="sname" @bind="SurName">
                     </div>
+                    @if (Message == "A keresztnév mező kitöltése kötelező!")
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @Message
+                        </div>
+                    }
                     <div class="form-group">
                         <label for="email">E-mail:</label>
                         <input type="email" class="form-control" id="email" name="email" @bind="Email">
                     </div>
+                    @if (Message == "Az e-mail mező kitöltése kötelező!" || Message == "Az e-mail cím formátuma nem megfelelő, '@vallalat.hu'-ra kell végződnie!")
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @Message
+                        </div>
+                    }
                     <div class="form-group">
                         <label for="jtitle">Beosztás:</label>
                         <select class="form-control" id="jtitle" name="jtitle" @bind="@SelectedJobTitleId">
@@ -49,6 +67,12 @@
                         <label for="phone">Mobil:</label>
                         <input type="tel" class="form-control" id="phone" name="phone" @bind="Phone">
                     </div>
+                    @if (Message == "A mobil mező kitöltése kötelező!")
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @Message
+                        </div>
+                    }
                     <div class="form-group">
                         <label for="supervisor">Felettes:</label>
                         <select class="form-control" id="supervisor" name="supervisor" @bind="@SelectedSupervisorId">
@@ -107,8 +131,6 @@
 </div>
 
 
-
-
 @code {
 
     [Parameter]
@@ -159,6 +181,32 @@
     {
         try
         {
+            if (string.IsNullOrEmpty(FirstName))
+            {
+                Message = "A vezetéknév mező kitöltése kötelező!";
+                return;
+            }
+            if (string.IsNullOrEmpty(SurName))
+            {
+                Message = "A keresztnév mező kitöltése kötelező!";
+                return;
+            }
+            if (string.IsNullOrEmpty(Email))
+            {
+                Message = "Az e-mail mező kitöltése kötelező!";
+                return;
+            }
+
+            if (!Email.EndsWith("@vallalat.hu", StringComparison.OrdinalIgnoreCase))
+            {
+                Message = "Az e-mail cím formátuma nem megfelelő, '@vallalat.hu'-ra kell végződnie!";
+                return;
+            }
+            if (string.IsNullOrEmpty(Phone))
+            {
+                Message = "A mobil mező kitöltése kötelező!";
+                return;
+            }
             if (Password != PasswordCheck)
             {
                 Message = "A jelszavak nem egyeznek meg.";
