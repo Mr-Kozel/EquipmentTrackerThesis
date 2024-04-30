@@ -55,15 +55,15 @@
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-    private string? currentRole;
+    //private string? currentRole;
 
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
     }
 
-    protected override void OnInitialized()
+    /*protected override void OnInitialized()
     {
         currentRole = signInCheck.GetRole();
-    }
+    }*/
 }

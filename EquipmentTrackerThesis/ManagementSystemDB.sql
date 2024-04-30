@@ -119,9 +119,9 @@ ALTER TABLE Employee
 /*6*/INSERT INTO Devices (SerialNumber, Name, Type, PurchaseDate, Owner, ReceptionDate, ReturnDate) VALUES (654614812, 'Dell Latitude', 'Laptop', '2022-05-07', 4, '2022-05-15', '2022-05-15');
 /*7*/INSERT INTO Devices (SerialNumber, Name, Type, PurchaseDate, Owner, ReceptionDate, ReturnDate) VALUES (654614812, 'Volvo XC90', 'Jármû', '2022-02-14', 1, '2022-02-15', '2022-02-15');
 
-/*0*/INSERT INTO Login (Username, Password, LastLogin) VALUES ('admin', 'TKe63+JK9sK0OzEsDZMpSSs2w8dVERCzVoSZbppTlQM=                                                        ', '2022-01-01'); /*jelszó: admin*/
-/*1*/INSERT INTO Login (Username, Password, LastLogin) VALUES ('kozak.g@vallalat.hu', 'O5pwkhTwLVIwIjrLvj1LsVRkw7d3h5q/46DYIPvS0bU=', '2022-01-01'); /*jelszó: LFBQ2A*/
-/*2*/INSERT INTO Login (Username, Password, LastLogin) VALUES ('kiss.p@vallalat.hu', 'O5pwkhTwLVIwIjrLvj1LsVRkw7d3h5q/46DYIPvS0bU=', '2022-01-01'); /*jelszó: LFBQ2A*/
+/*0*/INSERT INTO Login (Username, Password, LastLogin, Role) VALUES ('admin', 'TKe63+JK9sK0OzEsDZMpSSs2w8dVERCzVoSZbppTlQM=', '2022-01-01', 'Admin'); /*jelszó: admin*/
+/*1*/INSERT INTO Login (Username, Password, LastLogin, Role) VALUES ('kozak.g@vallalat.hu', 'O5pwkhTwLVIwIjrLvj1LsVRkw7d3h5q/46DYIPvS0bU=', '2022-01-01', 'Admin'); /*jelszó: LFBQ2A*/
+/*2*/INSERT INTO Login (Username, Password, LastLogin, Role) VALUES ('kiss.p@vallalat.hu', 'O5pwkhTwLVIwIjrLvj1LsVRkw7d3h5q/46DYIPvS0bU=', '2022-01-01', 'Admin'); /*jelszó: LFBQ2A*/
 /*3*/INSERT INTO Login (Username, Password, LastLogin) VALUES ('nagy.p@vallalat.hu', 'O5pwkhTwLVIwIjrLvj1LsVRkw7d3h5q/46DYIPvS0bU=', '2022-01-01'); /*jelszó: LFBQ2A*/
 /*4*/INSERT INTO Login (Username, Password, LastLogin) VALUES ('kover.g@vallalat.hu', 'O5pwkhTwLVIwIjrLvj1LsVRkw7d3h5q/46DYIPvS0bU=', '2022-01-01'); /*jelszó: LFBQ2A*/
 /*5*/INSERT INTO Login (Username, Password, LastLogin) VALUES ('karcsu.s@vallalat.hu', 'O5pwkhTwLVIwIjrLvj1LsVRkw7d3h5q/46DYIPvS0bU=', '2022-01-01'); /*jelszó: LFBQ2A*/
@@ -130,4 +130,4 @@ ALTER TABLE Employee
 /*8*/INSERT INTO Login (Username, Password, LastLogin) VALUES ('prroba.b@vallalat.hu', 'O5pwkhTwLVIwIjrLvj1LsVRkw7d3h5q/46DYIPvS0bU=', '2022-01-01'); /*jelszó: LFBQ2A*/
 /*9*/INSERT INTO Login (Username, Password, LastLogin) VALUES ('toth.a@vallalat.hu', 'O5pwkhTwLVIwIjrLvj1LsVRkw7d3h5q/46DYIPvS0bU=', '2022-01-01'); /*jelszó: LFBQ2A*/
 /*10*/INSERT INTO Login (Username, Password, LastLogin) VALUES ('balogh.r@vallalat.hu', 'O5pwkhTwLVIwIjrLvj1LsVRkw7d3h5q/46DYIPvS0bU=', '2022-01-01'); /*jelszó: LFBQ2A*/
-/*11*/INSERT INTO Login (Username, Password, LastLogin) VALUES ('vegh.f@vallalat.hu', 'O5pwkhTwLVIwIjrLvj1LsVRkw7d3h5q/46DYIPvS0bU=                                                        ', '2022-01-01'); /*jelszó: LFBQ2A*/
+/*11*/INSERT INTO Login (Username, Password, LastLogin) VALUES ('vegh.f@vallalat.hu', 'O5pwkhTwLVIwIjrLvj1LsVRkw7d3h5q/46DYIPvS0bU=', '2022-01-01'); /*jelszó: LFBQ2A*/

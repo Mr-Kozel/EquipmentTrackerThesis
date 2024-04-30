@@ -127,7 +127,7 @@
         ModalClass = "Show";
         ShowBackdrop = true;
         StateHasChanged();
-        types = ["Mobil", "Laptop", "Tablet", "Jármű"];
+        types = new List<string> { "Mobil", "Laptop", "Tablet", "Jármű" };
         Type = ModalWindowType.Adding;
 
         employees = _databaseHandler.GetAllEmployees();
