@@ -71,6 +71,10 @@
                 <button type="button" class="btn spa-btn-secondary" data-dismiss="modal" @onclick="() => Update()">Módosítás</button>
                 <button type="button" class="btn spa-btn-secondary" data-dismiss="modal" @onclick="() => Close()">Mégse</button>
             </div>
+            @if (message == "Hiba: A dolgozó adataiban nem történt változás!")
+            {
+                <span class="alert alert-danger" role="alert">@message</span>
+            }
         </div>
     </div>
 </div>
@@ -121,6 +125,7 @@
     public Guid Guid = Guid.NewGuid();
     public string ModalDisplay = "none;";
     public string ModalClass = "";
+    public string message = "";
     private string? originalSurName;
     private string? originalFirstName;
     private string? originalEmail;
@@ -135,6 +140,7 @@
         ModalDisplay = "block;";
         ModalClass = "Show";
         ShowBackdrop = true;
+        message = "";
         Type = ModalWindowType.Modify;
         StateHasChanged();
 
@@ -164,6 +170,7 @@
         ModalDisplay = "none";
         ModalClass = "";
         ShowBackdrop = false;
+        message = "";
         StateHasChanged();
     }
 
@@ -189,6 +196,10 @@
 
             _databaseHandler.UpdateEmployee(Employee);
             Close();
+        }
+        else
+        {
+            message = "Hiba: A dolgozó adataiban nem történt változás!";
         }
     }
 

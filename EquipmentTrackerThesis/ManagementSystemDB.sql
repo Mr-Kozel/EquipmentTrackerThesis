@@ -106,7 +106,7 @@ ALTER TABLE Employee
 /*5*/INSERT INTO Employee (SurName, FirstName, Email, JobTitle, Phone, Supervisor, Gender) VALUES ('Karcsú', 'Sándor Géza', 'karcsu.s@vallalat.hu', 5006, +36207531596, 2, 1);
 /*6*/INSERT INTO Employee (SurName, FirstName, Email, JobTitle, Phone, Supervisor, Gender) VALUES ('Hosszú', 'Sára', 'hosszu.s@vallalat.hu', 5005, +36205636987, 5, 0);
 /*7*/INSERT INTO Employee (SurName, FirstName, Email, JobTitle, Phone, Supervisor, Gender) VALUES ('Rövid', 'Béla', 'rovid.b@vallalat.hu', 5007, +36208546753, 2, 1);
-/*8*/INSERT INTO Employee (SurName, FirstName, Email, JobTitle, Phone, Supervisor, Gender) VALUES ('Próba', 'Betrix Emese', 'prroba.b@vallalat.hu', 5007, +36206683155, 2, 0);
+/*8*/INSERT INTO Employee (SurName, FirstName, Email, JobTitle, Phone, Supervisor, Gender) VALUES ('Próba', 'Betrix Emese', 'proba.b@vallalat.hu', 5007, +36206683155, 2, 0);
 /*9*/INSERT INTO Employee (SurName, FirstName, Email, JobTitle, Phone, Supervisor, Gender) VALUES ('Tóth', 'Áron', 'toth.a@vallalat.hu', 5008, +36202346158, 2, 1);
 /*10*/INSERT INTO Employee (SurName, FirstName, Email, JobTitle, Phone, Supervisor, Gender) VALUES ('Balogh', 'Róbert', 'balogh.r@vallalat.hu', 5003, +36204623751, 2, 1);
 /*11*/INSERT INTO Employee (SurName, FirstName, Email, JobTitle, Phone, Supervisor, Gender) VALUES ('Végh', 'Fanni', 'vegh.f@vallalat.hu', 5008, +36202349516, 2, 0);
@@ -127,7 +127,7 @@ ALTER TABLE Employee
 /*5*/INSERT INTO Login (Username, Password, LastLogin) VALUES ('karcsu.s@vallalat.hu', 'O5pwkhTwLVIwIjrLvj1LsVRkw7d3h5q/46DYIPvS0bU=', '2022-01-01'); /*jelszó: LFBQ2A*/
 /*6*/INSERT INTO Login (Username, Password, LastLogin) VALUES ('hosszu.s@vallalat.hu', 'O5pwkhTwLVIwIjrLvj1LsVRkw7d3h5q/46DYIPvS0bU=', '2022-01-01'); /*jelszó: LFBQ2A*/
 /*7*/INSERT INTO Login (Username, Password, LastLogin) VALUES ('rovid.b@vallalat.hu', 'O5pwkhTwLVIwIjrLvj1LsVRkw7d3h5q/46DYIPvS0bU=', '2022-01-01'); /*jelszó: LFBQ2A*/
-/*8*/INSERT INTO Login (Username, Password, LastLogin) VALUES ('prroba.b@vallalat.hu', 'O5pwkhTwLVIwIjrLvj1LsVRkw7d3h5q/46DYIPvS0bU=', '2022-01-01'); /*jelszó: LFBQ2A*/
+/*8*/INSERT INTO Login (Username, Password, LastLogin) VALUES ('proba.b@vallalat.hu', 'O5pwkhTwLVIwIjrLvj1LsVRkw7d3h5q/46DYIPvS0bU=', '2022-01-01'); /*jelszó: LFBQ2A*/
 /*9*/INSERT INTO Login (Username, Password, LastLogin) VALUES ('toth.a@vallalat.hu', 'O5pwkhTwLVIwIjrLvj1LsVRkw7d3h5q/46DYIPvS0bU=', '2022-01-01'); /*jelszó: LFBQ2A*/
 /*10*/INSERT INTO Login (Username, Password, LastLogin) VALUES ('balogh.r@vallalat.hu', 'O5pwkhTwLVIwIjrLvj1LsVRkw7d3h5q/46DYIPvS0bU=', '2022-01-01'); /*jelszó: LFBQ2A*/
 /*11*/INSERT INTO Login (Username, Password, LastLogin) VALUES ('vegh.f@vallalat.hu', 'O5pwkhTwLVIwIjrLvj1LsVRkw7d3h5q/46DYIPvS0bU=', '2022-01-01'); /*jelszó: LFBQ2A*/

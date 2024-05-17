@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <Compile Remove="Database\UserDatabase.cs" />
+    <Compile Remove="Data\LoginModel.cs" />
     <Compile Remove="Pages\Index.cshtml.cs" />
     <Compile Remove="Shared\AuthModel.cs" />
   </ItemGroup>

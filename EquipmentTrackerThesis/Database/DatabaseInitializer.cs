@@ -22,7 +22,6 @@ namespace EquipmentTrackerThesis.Database
 
                     if (!DatabaseExists(connection, "ManagementSystemDB"))
                     {
-                        //CreateDatabase(connection, "ManagementSystemDB");
                         ExecuteSqlScript(connection, "ManagementSystemDB.sql");
                         Console.WriteLine("Database created successfully.");
                     }
@@ -76,7 +75,7 @@ namespace EquipmentTrackerThesis.Database
             {
                 script = reader.ReadToEnd();
             }
-
+    
             string[] statements = script.Split(new[] { "GO" }, StringSplitOptions.RemoveEmptyEntries);
 
             SqlCommand cmd = new SqlCommand(script, connection);

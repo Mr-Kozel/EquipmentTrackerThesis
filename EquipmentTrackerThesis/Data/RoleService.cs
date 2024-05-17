@@ -1,5 +1,4 @@
 ﻿using EquipmentTrackerThesis.Database;
-using EquipmentTrackerThesis.Database.Models;
 
 namespace EquipmentTrackerThesis.Data
 {
