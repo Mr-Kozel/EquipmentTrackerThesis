@@ -180,22 +180,25 @@
 
     protected override void OnInitialized()
     {
+        //If there is no signed in user, the page reloads the Account page, where users can log in.
         if (signInCheck.CurrentEmployee == null || string.IsNullOrEmpty(signInCheck.CurrentEmployee.Username) || signInCheck.GetRole() == "Employee")
         {
             navigationmanager.NavigateTo("/");
             return;
         }
+
         base.OnInitialized();
 
+        //Fills the necessary variabes with the user's data.
         employees = _databaseHandler.GetAllEmployees();
         jobTitle = _databaseHandler.GetAllJobTitles();
-
     }
 
     public void AddNewEmployee()
     {
         try
         {
+            //First checks if all fields are filled with the required data.
             if (string.IsNullOrEmpty(FirstName))
             {
                 Message = "A vezetéknév mező kitöltése kötelező!";
@@ -211,7 +214,6 @@
                 Message = "Az e-mail mező kitöltése kötelező!";
                 return;
             }
-
             if (!Email.EndsWith("@vallalat.hu", StringComparison.OrdinalIgnoreCase))
             {
                 Message = "Az e-mail cím formátuma nem megfelelő, '@vallalat.hu'-ra kell végződnie!";
@@ -232,7 +234,6 @@
                 Message = "Minden mezőt ki kell tölteni!";
                 return;
             }
-
             if (string.IsNullOrEmpty(Password))
             {
                 Message = "Jelszó nem lehet üres!";
@@ -241,6 +242,7 @@
 
             char[] characters = Password.ToCharArray();
 
+            //Checks if the given password meets the requirements.
             foreach (char enteredCharacters in characters)
             {
                 if (char.IsUpper(enteredCharacters))
@@ -260,13 +262,13 @@
                     character = character + 1;
                 }
             }
-
             if (upper < minUpper || lower < minLower || Password.Length < minLength || Password.Length > maxLength)
             {
                 Message = "Ajelszónk tartalmaznia kell kis- és nagybetűt, számot és speciális karaktert is. A jelszónak minimum 8, maximum 15 karakter hosszúnak kell lennie!";
                 return;
             }
 
+            //Creates an Employee and Login variable, fills them with the given data and saves them to the database.
             Employee Employee = new Employee();
             Employee.SurName = SurName;
             Employee.FirstName = FirstName;
@@ -294,6 +296,7 @@
         Password = string.Empty;
         PasswordCheck = string.Empty;
 
+        //Ater saving process, the program navigates back to Account page.
         Task.Delay(3000).ContinueWith(t =>
         {
             Message = string.Empty;

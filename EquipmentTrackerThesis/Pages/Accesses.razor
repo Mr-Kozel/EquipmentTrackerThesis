@@ -52,9 +52,6 @@
             <img src=@county width="12" height="12" />
         </div>
     </div>
-
-
-
 </div>
 
 
@@ -71,21 +68,18 @@
     public string? surName;
     public int employee;
     private string selectedEmail = "";
-    //public string? UserName { get; set; }
 
     protected override void OnAfterRender(bool firstRender)
     {
         if (firstRender)
         {
             
-
-            
-            
         }
     }
 
     protected override void OnInitialized()
     {
+        //If there is no signed in user, the page reloads the Account page, where users can log in.
         if (signInCheck.CurrentEmployee == null || string.IsNullOrEmpty(signInCheck.CurrentEmployee.Username))
         {
             navigationmanager.NavigateTo("/");
@@ -94,6 +88,7 @@
 
         base.OnInitialized();
 
+        //Searches the logged in user's data.
         selectedEmail = signInCheck.CurrentEmployee?.Employee?.Email ?? "";
         var employees = _databaseHandler.GetAllEmployees();
         var employeeEmails = employees.Select(x => x.Email).ToList();
@@ -106,6 +101,7 @@
             }
         }
 
+        //Fills the necessary variabes with the user's data.
         var jobTitles = _databaseHandler.GetAllJobTitles();
         var accessCards = _databaseHandler.GetAllAccessCards();
 
@@ -114,8 +110,9 @@
         surName = employees[employee].SurName;
         firstName = employees[employee].FirstName;
 
-        bool x = accessCards[accessCardId].MainBuilding;
-        if (x == true)
+        //Developement: find an easyer and shorter way to handle these images.
+        bool a = accessCards[accessCardId].MainBuilding;
+        if (a == true)
         {
             main = "/css/check.png";
         }
@@ -124,8 +121,8 @@
             main = "/css/close.png";
         }
 
-        bool y = accessCards[accessCardId].Laboratory;
-        if (y == true)
+        bool b = accessCards[accessCardId].Laboratory;
+        if (b == true)
         {
             lab = "/css/check.png";
         }
@@ -134,8 +131,8 @@
             lab = "/css/close.png";
         }
 
-        bool z = accessCards[accessCardId].DevelopementCenter;
-        if (z == true)
+        bool c = accessCards[accessCardId].DevelopementCenter;
+        if (c == true)
         {
             rnd = "/css/check.png";
         }
@@ -144,8 +141,8 @@
             rnd = "/css/close.png";
         }
 
-        bool v = accessCards[accessCardId].ProductionSite;
-        if (v == true)
+        bool d = accessCards[accessCardId].ProductionSite;
+        if (d == true)
         {
             prod = "/css/check.png";
         }
@@ -154,8 +151,8 @@
             prod = "/css/close.png";
         }
 
-        bool w = accessCards[accessCardId].Warehouse;
-        if (w == true)
+        bool e = accessCards[accessCardId].Warehouse;
+        if (e == true)
         {
             ware = "/css/check.png";
         }
@@ -164,8 +161,8 @@
             ware = "/css/close.png";
         }
 
-        bool ww = accessCards[accessCardId].HazardWarehouse;
-        if (ww == true)
+        bool f = accessCards[accessCardId].HazardWarehouse;
+        if (f == true)
         {
             hware = "/css/check.png";
         }
@@ -174,8 +171,8 @@
             hware = "/css/close.png";
         }
 
-        bool zs = accessCards[accessCardId].CountrysideSite;
-        if (zs == true)
+        bool g = accessCards[accessCardId].CountrysideSite;
+        if (g == true)
         {
             county = "/css/check.png";
         }

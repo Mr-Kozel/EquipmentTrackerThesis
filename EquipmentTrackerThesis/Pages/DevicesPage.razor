@@ -26,7 +26,6 @@
             <button class="btn btn-primary disabled">Eszköz módosítása/archiválása</button>
         }
     }
-
 </div>
 
 <ModalDialogWindowToAdd @ref="modalDialogWindowToAdd"></ModalDialogWindowToAdd>
@@ -99,11 +98,13 @@ else
 
     protected override void OnInitialized()
     {
+        //If there is no signed in user, the page reloads the Account page, where users can log in.
         if (signInCheck.CurrentEmployee == null || string.IsNullOrEmpty(signInCheck.CurrentEmployee.Username))
         {
             navigationmanager.NavigateTo("/");
             return;
         }
+
         devices = _databaseHandler.GetAllDevices();
         employee = _databaseHandler.GetAllEmployees();
         filteredDevices = devices;
@@ -114,6 +115,9 @@ else
         searchTerm = e.Value?.ToString() ?? string.Empty;
     }
 
+    /// <summary>
+    /// This method filters the data based on the given characters.
+    /// </summary>
     void FilterDevices()
     {
         if (string.IsNullOrWhiteSpace(searchTerm))
@@ -132,6 +136,9 @@ else
         }
     }
 
+    /// <summary>
+    /// This method opens a dialog window to add new device.
+    /// </summary>
     public void AddNewDevice()
     {
         if (modalDialogWindowToAdd != null)
@@ -140,6 +147,9 @@ else
         }
     }
 
+    /// <summary>
+    /// This method opens a dialog window filled with the selected data to modify.
+    /// </summary>
     public void ModifyDevice()
     {
         if (selectedDevice != null && modalDialogWindowToModifyRemove != null)
@@ -148,6 +158,10 @@ else
         }
     }
 
+    /// <summary>
+    /// This method stores the selected device.
+    /// </summary>
+    /// <param name="device"></param>
     void SelectDevice(Devices device)
     {
         selectedDevice = device;
@@ -155,6 +169,11 @@ else
         existSelectedDivice = true;
     }
 
+    /// <summary>
+    /// This method makes hover the row where the cursor stays.
+    /// </summary>
+    /// <param name="isHovered"></param>
+    /// <param name="device"></param>
     void HoverRow(bool isHovered, Devices? device = null)
     {
         if (isHovered)

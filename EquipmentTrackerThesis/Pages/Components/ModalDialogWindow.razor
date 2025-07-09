@@ -113,7 +113,6 @@
             return _type;
         }
         set
-
         {
             _type = value;
         }
@@ -135,6 +134,10 @@
     private int SelectedSupervisorId;
     public int SelectedJobTitleId;
 
+    /// <summary>
+    /// Opens the dialog window with the personal data.
+    /// </summary>
+    /// <param name="employee"></param>
     public void Open(Employee employee)
     {
         ModalDisplay = "block;";
@@ -165,6 +168,9 @@
         Employee = employee;
     }
 
+    /// <summary>
+    /// Closes the dialog window.
+    /// </summary>
     public void Close()
     {
         ModalDisplay = "none";
@@ -174,6 +180,9 @@
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Updates the modified attributes in the database and closes the dialog window. At first checks if any modifications has been made.
+    /// </summary>
     public void Update()
     {
         bool isModified = SurName != originalSurName ||
@@ -203,6 +212,7 @@
         }
     }
 
+
     public void HandleJobTitleChange(ChangeEventArgs e)
     {
         if (int.TryParse(e.Value?.ToString(), out int selectedJobTitleId))
@@ -211,6 +221,10 @@
         }
     }
 
+    /// <summary>
+    /// This method helps to get the dialog window's style.
+    /// </summary>
+    /// <returns></returns>
     private string ModalTypeToClass()
     {
         switch (Type)
@@ -226,6 +240,10 @@
         }
     }
 
+    /// <summary>
+    /// This method helps to define the icon of the dialog window.
+    /// </summary>
+    /// <returns></returns>
     private string IconFromModalType()
     {
         //Open Iconic: https://icon-sets.iconify.design/oi/

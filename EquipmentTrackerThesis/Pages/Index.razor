@@ -47,26 +47,29 @@
     List<Employee> employees = new List<Employee>();
     List<JobTitle> jobTitle = new List<JobTitle>();
     Employee employee = new Employee();
-    
+
     string? location, firstName, surName, name, position, email, phone, boss, boss1, boss2, description;
     private string selectedEmail = "";
     bool gender;
-    int z; // az adott felhasználó száma
+    int z; // the signed in user
     int supervisor, pos;
-    
+
     protected override void OnInitialized()
     {
+        //If there is no signed in user, the page reloads the Account page, where users can log in.
         if (signInCheck.CurrentEmployee == null || string.IsNullOrEmpty(signInCheck.CurrentEmployee.Username))
         {
             navigationmanager.NavigateTo("/");
             return;
         }
+
         base.OnInitialized();
 
+        //Searches the logged in user's data.
         selectedEmail = signInCheck.CurrentEmployee?.Employee?.Email ?? "";
         employees = _databaseHandler.GetAllEmployees();
         jobTitle = _databaseHandler.GetAllJobTitles();
-                
+
         var employeeEmails = employees.Select(x => x.Email).ToList();
 
         if (string.IsNullOrEmpty(signInCheck.CurrentEmployee?.Employee?.Email) == false)
@@ -81,6 +84,8 @@
         var x = employees[z];
         employee = x;
 
+        //loads in a male/female picture
+        //Develope: let users upload profile pcturesand store them
         if (x.Gender)
         {
             location = "/css/male.png";
@@ -109,6 +114,10 @@
         supervisor = x.Supervisor;
     }
 
+    /// <summary>
+    /// This method opens a dialog window filled with user data, where the data can be modified.
+    /// </summary>
+    /// <param name="employee"></param>
     private void Modify(Employee employee)
     {
         if (modalDialogWindow != null)
@@ -117,65 +126,5 @@
         }
     }
 
-    //TODO: kezeni az idegen kulcsok mitti törlés tiltását hozzá tartozó hibaüzenettel
-
-    /*AccessCard x = new AccessCard();
-    x.MainBuilding = true;
-    x.Laboratory = false;
-    x.ProductionSite = true;
-    x.ProductionSite = false;
-    x.HazardWarehouse = true;
-    x.DevelopementCenter = false;
-    x.CountrysideSite = false;
-
-    _databaseHandler.AddNewAccessCard(x);
-    var accessCards = _databaseHandler.GetAllAccessCards();
-    bool z = accessCards[1].Laboratory;
-    _databaseHandler.DeleteAccessCard(accessCards[7]);*/
-
-    /*Devices x = new Devices();
-    x.SerialNumber = "51654132516sdf";
-    x.Type = "Tablet";
-    x.PurchaseDate = new DateTime(2024, 2, 28);
-
-    _databaseHandler.AddNewDevice(x);
-    var devices = _databaseHandler.GetAllDevices();
-    string z = devices[1].Type;
-    _databaseHandler.DeleteDevice(devices[5]);*/
-
-    /*Employee x = new Employee();
-    x.SurName = "Próba";
-    x.FirstName = "Mihály";
-    x.Email = "proba@proba.hu";
-    x.JobTitle = 5004;
-    x.Supervisor = 3;
-
-    _databaseHandler.AddNewEmployee(x);
-    var employee = _databaseHandler.GetAllEmployees();
-    string z = employee[1].FirstName;
-    _databaseHandler.DeleteEmployee(employee[3]);*/
-
-    /*JobTitle x = new JobTitle();
-    x.Description = "Sofőr";
-    x.AccessCardType = 1004;
-
-    _databaseHandler.AddNewJobTitle(x);
-    var jobTitle = _databaseHandler.GetAllJobTitles();
-    string z = jobTitle[1].Description;
-    _databaseHandler.DeleteJobTitle(jobTitle[3]);*/
-
-
-    //admin felhasználó hozzáadása
-    /*Login xy = new Login();
-    xy.Username = "admin";
-    xy.Password = _dbcontext.HashPassword("admin");
-    xy.LastLogin = DateTime.Now;
-    _databaseHandler.AddNewLogin(xy);*/
-
-    /*Login xy = new Login();
-    xy.Username = employees[0].Email;
-    xy.Password = _dbcontext.HashPassword("LFBQ2A");
-    xy.LastLogin = DateTime.Now;
-    _databaseHandler.AddNewLogin(xy);*/
-
+    //TODO: 
 }

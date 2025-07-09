@@ -3,27 +3,37 @@ using System.Text;
 
 namespace EquipmentTrackerThesis.Database
 {
+    /// <summary>
+    /// This class connects to an existng database or creates one if there is not existed one.
+    /// </summary>
     public class DatabaseInitializer
     {
         private readonly string _connectionString;
 
+        /// <summary>
+        /// This method stores the connection string to the database. 
+        /// </summary>
         public DatabaseInitializer(string connectionString)
         {
             _connectionString = connectionString;
         }
 
+        /// <summary>
+        /// This method tries to connect to exixting database. If database not exists, the program creates a default one.
+        /// </summary>
         public void InitializeDatabase()
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (SqlConnection connection = new(_connectionString))
             {
                 try
                 {
+                    //Tries to open the given path
                     connection.Open();
 
+                    //If dtabese is not exists the program tries to crete it
                     if (!DatabaseExists(connection, "ManagementSystemDB"))
                     {
                         ExecuteSqlScript(connection, "ManagementSystemDB.sql");
-                        Console.WriteLine("Database created successfully.");
                     }
                     else
                     {
@@ -37,48 +47,46 @@ namespace EquipmentTrackerThesis.Database
             }
         }
 
-        private bool DatabaseExists(SqlConnection connection, string databaseName)
+        /// <summary>
+        /// This method checks if the specified database is existed or not.
+        /// </summary>
+        /// <param name="connection">The connection string to the database.</param>
+        /// <param name="databaseName">The name of the database you are searching.</param>
+        /// <returns></returns>
+        private static bool DatabaseExists(SqlConnection connection, string databaseName)
         {
             string query = $"SELECT COUNT(*) FROM master.dbo.sysdatabases WHERE name = '{databaseName}'";
 
-            using (SqlCommand cmd = new SqlCommand(query, connection))
-            {
-                int result = Convert.ToInt32(cmd.ExecuteScalar());
-                return result > 0;
-            }
+            using SqlCommand cmd = new(query, connection);
+            int result = Convert.ToInt32(cmd.ExecuteScalar());
+            return result > 0;
         }
 
-        private void CreateDatabase(SqlConnection connection, string databaseName)
-        {
-            string query = $"CREATE DATABASE {databaseName}";
-
-            using (SqlCommand cmd = new SqlCommand(query, connection))
-            {
-                cmd.ExecuteNonQuery();
-            }
-        }
-
-        private void ExecuteSqlScript(SqlConnection connection, string scriptFileName)
+        //Develope: It wuld be a better solution to use JSON files instead of query.
+        /// <summary>
+        /// This method opens and runs the query to create a sample database.
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="scriptFileName"></param>
+        private static void ExecuteSqlScript(SqlConnection connection, string scriptFileName)
         {
             string currentDirectory = Directory.GetCurrentDirectory();
             string scriptFilePath = Path.Combine(currentDirectory, scriptFileName);
-            Console.WriteLine($"Executing script from: {scriptFilePath}"); // Debug statement
 
             if (!File.Exists(scriptFilePath))
             {
+                
                 Console.WriteLine($"Error: Script file not found at {scriptFilePath}");
                 return;
             }
 
             string script;
-            using (StreamReader reader = new StreamReader(scriptFilePath, Encoding.GetEncoding(1250)))
+            using (StreamReader reader = new(scriptFilePath, Encoding.GetEncoding(1250)))
             {
                 script = reader.ReadToEnd();
             }
     
-            string[] statements = script.Split(new[] { "GO" }, StringSplitOptions.RemoveEmptyEntries);
-
-            SqlCommand cmd = new SqlCommand(script, connection);
+            SqlCommand cmd = new(script, connection);
             cmd.ExecuteNonQuery();
         }
     }

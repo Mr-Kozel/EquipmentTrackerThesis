@@ -102,7 +102,6 @@
             return _type;
         }
         set
-
         {
             _type = value;
         }
@@ -120,7 +119,10 @@
     public int selectedOwnerId;
     DateTime selectedPurchaseDate;
     DateTime selectedReceptionDate;
-    
+
+    /// <summary>
+    /// This method opens the dialog window.
+    /// </summary>
     public void Open()
     {
         ModalDisplay = "block;";
@@ -134,6 +136,9 @@
         jobTitle = _databaseHandler.GetAllJobTitles();
     }
 
+    /// <summary>
+    /// This method closes the dilog window.
+    /// </summary>
     public void Close()
     {
         ModalDisplay = "none";
@@ -142,6 +147,9 @@
         StateHasChanged();
     }
 
+    /// <summary>
+    /// This method creates a new Device and adds to the database. 
+    /// </summary>
     public void Add()
     {
         Device = new Devices();
@@ -164,9 +172,12 @@
         Close();
     }
 
+    /// <summary>
+    /// This method helps to get the dialog window's style.
+    /// </summary>
+    /// <returns></returns>
     private string ModalTypeToClass()
     {
-        //I added these classes to the CSS file, you can modify it further
         switch (Type)
         {
             case ModalWindowType.Modify:
@@ -182,6 +193,10 @@
         }
     }
 
+    /// <summary>
+    /// This method helps to define the icon of the dialog window.
+    /// </summary>
+    /// <returns></returns>
     private string IconFromModalType()
     {
         //Icons: https://icon-sets.iconify.design/oi/

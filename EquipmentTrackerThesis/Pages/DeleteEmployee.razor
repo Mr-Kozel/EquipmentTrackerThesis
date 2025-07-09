@@ -35,12 +35,14 @@
                 </div>
             </div>
         </div>
+
         @if (!string.IsNullOrEmpty(Message))
         {
             <div class="alert alert-success" role="alert">
                 @Message
             </div>
         }
+
         @if (SelectedEmployee != null)
         {
             <div>
@@ -67,7 +69,6 @@
     [Inject] private NavigationManager? NavigationManager { get; set; }
     private ModalConfirmWindow? modalConfirmWindow { get; set; }
 
-
     List<Employee> employees = new List<Employee>();
 
     public string? UserName { get; set; }
@@ -77,16 +78,21 @@
 
     protected override void OnInitialized()
     {
+        //If there is no signed in user, the page reloads the Account page, where users can log in.
         if (signInCheck.CurrentEmployee == null || string.IsNullOrEmpty(signInCheck.CurrentEmployee.Username))
         {
             navigationmanager.NavigateTo("/");
             return;
         }
+
         base.OnInitialized();
 
         employees = _databaseHandler.GetAllEmployees();
     }
 
+    /// <summary>
+    /// This method finds the selected employee based on his/her email address.
+    /// </summary>
     private void UpdateSelectedEmployee(ChangeEventArgs e)
     {
         SelectedEmail = e.Value?.ToString();
@@ -96,6 +102,10 @@
         }
     }
 
+    /// <summary>
+    /// This method removes the selected employee from database. Then navigates back to Account page.
+    /// </summary>
+    /// <param name="selectedEmployeeId">Selected employee</param>
     public void RemoveEmployee(int selectedEmployeeId)
     {
         try
@@ -118,6 +128,9 @@
         });
     }
 
+    /// <summary>
+    /// This method creates a pop-up window to confirm the deleting process.
+    /// </summary>
     private void TryRemoveEmployee()
     {
         if(SelectedEmployee != null && modalConfirmWindow != null)

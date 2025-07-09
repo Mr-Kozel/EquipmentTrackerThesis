@@ -79,7 +79,6 @@
 
 <ModalConfirmWindow @ref="modalConfirmWindow" OnAccepted="@(async () => Update())"></ModalConfirmWindow>
 
-
 @if (ShowBackdrop)
 {
     <div class="modal-backdrop fade show"></div>
@@ -119,7 +118,6 @@
             return _type;
         }
         set
-
         {
             _type = value;
         }
@@ -143,6 +141,10 @@
     private bool originalArchivedStatus;
     public bool ShowBackdrop = false;
 
+    /// <summary>
+    /// This method opens a dialog window with the selected data.
+    /// </summary>
+    /// <param name="device">Selected item</param>
     public void Open(Devices device)
     {
         ModalDisplay = "block;";
@@ -176,6 +178,9 @@
         Device = device;
     }
 
+    /// <summary>
+    /// This method checks if any modifications were made. If yes, the method updates the database and closes the dialog window.
+    /// </summary>
     public void Update()
     {
         bool isModified = Name != originalName ||
@@ -207,6 +212,9 @@
         }
     }
 
+    /// <summary>
+    /// This method closes the dialog window.
+    /// </summary>
     public void Close()
     {
         ModalDisplay = "none";
@@ -216,6 +224,9 @@
         StateHasChanged();
     }
 
+    /// <summary>
+    /// This method asks if the user is sure to make the modification.
+    /// </summary>
     private void TryUpdate()
     {
         if (Device != null && Archived != originalArchivedStatus)
@@ -231,9 +242,12 @@
         }
     }
 
+    /// <summary>
+    /// This method helps to get the dialog window's style.
+    /// </summary>
+    /// <returns></returns>
     private string ModalTypeToClass()
     {
-        //I added these classes to the CSS file, you can modify it further
         switch (Type)
         {
             case ModalWindowType.Modify:
@@ -247,9 +261,12 @@
         }
     }
 
+    /// <summary>
+    /// This method helps to define the icon of the dialog window.
+    /// </summary>
+    /// <returns></returns>
     private string IconFromModalType()
     {
-        //These icons come from Open Iconic, which is part of bootstrap framework which is added automatically with Blazor
         //You can find possibilites here: https://icon-sets.iconify.design/oi/
         switch (Type)
         {

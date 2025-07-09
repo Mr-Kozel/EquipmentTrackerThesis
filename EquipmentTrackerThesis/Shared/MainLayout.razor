@@ -84,6 +84,10 @@
         return loggedIn ? user : null;
     }
 
+    /// <summary>
+    /// Opens the log in menu.
+    /// </summary>
+    /// <returns></returns>
     public async Task OpenLogin()
     {
         user = await LocalStorage.GetStringAsync("user", JSRuntime);
@@ -93,6 +97,10 @@
         show = true;
     }
 
+    /// <summary>
+    /// Logs out the user and navigates to the Account page.
+    /// </summary>
+    /// <returns></returns>
     public async Task Logout()
     {
         user = null;
@@ -105,6 +113,10 @@
         navigationmanager.NavigateTo("/");
     }
 
+    /// <summary>
+    /// Closes the dialog window.
+    /// </summary>
+    /// <returns></returns>
     private async Task Close()
     {
         show = false;
@@ -114,6 +126,9 @@
         StateHasChanged();
     }
 
+    /// <summary>
+    /// If the user field filled in, this method starts the SignIn method.
+    /// </summary>
     private void Login()
     {
         if (!string.IsNullOrEmpty(user))
@@ -133,6 +148,10 @@
             StateHasChanged();
         }
     }
+
+    /// <summary>
+    /// If the username and password fields are not empty, the method tries to log in the user.
+    /// </summary>
     private async void SignIn()
     {
         if (!string.IsNullOrEmpty(user) && !string.IsNullOrEmpty(password))

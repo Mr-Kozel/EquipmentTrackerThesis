@@ -12,7 +12,7 @@ namespace EquipmentTrackerThesis.Database
             _dbcontext = dbcontext;
         }
 
-        #region ACCESSCARDS - tested
+        #region ACCESSCARDS
 
         /// <summary>
         /// This method lists all accesscards in the table.
@@ -22,6 +22,7 @@ namespace EquipmentTrackerThesis.Database
         {
             return _dbcontext.AccessCard.ToList();
         }
+
         /// <summary>
         /// This method adds a row to AccessCard table.
         /// </summary>
@@ -31,6 +32,7 @@ namespace EquipmentTrackerThesis.Database
             _dbcontext.AccessCard.Add(accessCard);
             _dbcontext.SaveChanges();
         }
+
         /// <summary>
         /// This method removes the selcted row from AccessCard table.
         /// </summary>
@@ -40,6 +42,7 @@ namespace EquipmentTrackerThesis.Database
             _dbcontext.AccessCard.Remove(accessCard);
             _dbcontext.SaveChanges();
         }
+
         /// <summary>
         /// This method updates the selected data(s) of an accesscard.
         /// </summary>
@@ -52,7 +55,7 @@ namespace EquipmentTrackerThesis.Database
 
         #endregion
 
-        #region DEVICES - tested
+        #region DEVICES
 
         /// <summary>
         /// This method lists all devices in the table.
@@ -72,6 +75,7 @@ namespace EquipmentTrackerThesis.Database
             _dbcontext.Devices.Add(device);
             _dbcontext.SaveChanges();
         }
+
         /// <summary>
         /// This method removes the selcted row from Devices table.
         /// </summary>
@@ -81,6 +85,7 @@ namespace EquipmentTrackerThesis.Database
             _dbcontext.Devices.Remove(device);
             _dbcontext.SaveChanges();
         }
+
         /// <summary>
         /// This method updates the selected data(s) of a device.
         /// </summary>
@@ -93,7 +98,7 @@ namespace EquipmentTrackerThesis.Database
 
         #endregion
 
-        #region EMPLOYEES - tested
+        #region EMPLOYEES
 
         /// <summary>
         /// This method lists all employees in the table.
@@ -102,8 +107,8 @@ namespace EquipmentTrackerThesis.Database
         public List<Employee> GetAllEmployees()
         {
             return _dbcontext.Employee.ToList();
-            //return _dbcontext.Employee.Where(x => x.IsActive == true).ToList();
         }
+
         /// <summary>
         /// This method adds a row to Employee table.
         /// </summary>
@@ -113,15 +118,18 @@ namespace EquipmentTrackerThesis.Database
             _dbcontext.Employee.Add(employee);
             _dbcontext.SaveChanges();
         }
+
         /// <summary>
         /// This method removes the selcted row from Employee table.
         /// </summary>
         /// <param name="employee">The row of the selected employee.</param>
         public void DeleteEmployee(Employee employee)
         {
+            //Develope: It might be better in this case to inactivate the employee and all related data instead of deleting it. 
             _dbcontext.Employee.Remove(employee);
             _dbcontext.SaveChanges();
         }
+
         /// <summary>
         /// This method updates the selected data(s) of an employee.
         /// </summary>
@@ -134,7 +142,7 @@ namespace EquipmentTrackerThesis.Database
 
         #endregion
 
-        #region JOBTITLE  tested
+        #region JOBTITLE
 
         /// <summary>
         /// This method lists all jobtitles in the table.
@@ -144,6 +152,7 @@ namespace EquipmentTrackerThesis.Database
         {
             return _dbcontext.JobTitle.ToList();
         }
+
         /// <summary>
         /// This method adds a row to JobTitle table.
         /// </summary>
@@ -153,6 +162,7 @@ namespace EquipmentTrackerThesis.Database
             _dbcontext.JobTitle.Add(jobTitle);
             _dbcontext.SaveChanges();
         }
+
         /// <summary>
         /// This method removes the selcted row from JobTitle table.
         /// </summary>
@@ -162,6 +172,7 @@ namespace EquipmentTrackerThesis.Database
             _dbcontext.JobTitle.Remove(jobTitle);
             _dbcontext.SaveChanges();
         }
+
         /// <summary>
         /// This method updates the selected data(s) of a job title.
         /// </summary>
@@ -184,6 +195,7 @@ namespace EquipmentTrackerThesis.Database
         {
             return _dbcontext.Login.ToList();
         }
+
         /// <summary>
         /// This method adds a row to Login table.
         /// </summary>
@@ -193,6 +205,7 @@ namespace EquipmentTrackerThesis.Database
             _dbcontext.Login.Add(login);
             _dbcontext.SaveChanges();
         }
+
         /// <summary>
         /// This method removes the selcted row from Login table.
         /// </summary>
@@ -202,6 +215,7 @@ namespace EquipmentTrackerThesis.Database
             _dbcontext.Login.Remove(login);
             _dbcontext.SaveChanges();
         }
+
         /// <summary>
         /// This method updates the selected data(s) of a login.
         /// </summary>

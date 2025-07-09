@@ -25,11 +25,11 @@
 
 @code {
     [Parameter]
-    public string Title { get; set; }
+    public string? Title { get; set; }
     [Parameter]
-    public string Body { get; set; }
+    public string? Body { get; set; }
     [Parameter]
-    public string AcceptMessage { get; set; }
+    public string? AcceptMessage { get; set; }
     [Parameter]
     public EventCallback OnAccepted { get; set; }
 
@@ -38,6 +38,9 @@
     public string ModalClass = "";
     public bool ShowBackdrop = false;
 
+    /// <summary>
+    /// This method opens the dialog window.
+    /// </summary>
     public void Open()
     {
         ModalDisplay = "block;";
@@ -46,6 +49,9 @@
         StateHasChanged();
     }
 
+    /// <summary>
+    /// This method closes the dialog window.
+    /// </summary>
     public void Close()
     {
         ModalDisplay = "none";
@@ -54,6 +60,9 @@
         StateHasChanged();
     }
 
+    /// <summary>
+    /// This method does the desired action according to the dialog windows function.
+    /// </summary>
     private async void Accepted()
     {
         await OnAccepted.InvokeAsync();
